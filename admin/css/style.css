@@ -63,12 +63,13 @@ a:hover,a:active { color: #0b78ff; }
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover { border: none; color: #0f84fe; border-bottom:2px solid #0f84fe; }
-.nav-tabs>li>a { color:#5e6166; font-weight: bold; padding-left:0px; padding-right: 0px; margin-right: 30px; }
+.nav-tabs>li>a { color:#5e6166; font-weight: bold; padding-left:0px; padding-right: 0px; margin-right: 30px; cursor: pointer; }
 .nav-tabs>li>a, .nav-tabs>li>a:focus, .nav-tabs>li>a:hover { background: none; border-color: #fff; }
 .nav>li>a:focus, .nav>li>a:hover { background: none; }
 .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover { background: none; color: #0f84fe; }
 .nav a { color: #5e6166; }
-.dropdown-menu>li>a { line-height: 2; }
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover { background: none; }
+.dropdown-menu>li>a { line-height: 2; cursor: pointer; }
 
 
 .form-control { font-size: 12px; height: inherit; padding: 3px 6px; }

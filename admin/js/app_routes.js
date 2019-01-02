@@ -50,7 +50,8 @@ define(function (require) {
 
     app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
-        var default_page = "dashboard";
+        var default_page = settings.default_page;
+
         // 获取当前页面地址
         var url_list = window.location.href.split("#").pop();
         var page = url_list.split("/")[1];

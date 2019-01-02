@@ -27,11 +27,6 @@ require.config({
 
 
 require(['angular', './js/app_routes'], function (angular) {
-    // 为了解决一个由移动运营商插入的广告代码引起angular框架崩溃的问题
-    angular.module('toolbarCore', [])
-            .controller('coreController', ['$scope', function ($scope) {
-                $scope.greetMe = 'World';
-            }]);
     angular.element(document).ready(function () {
         angular.bootstrap(document, ['app']);
         angular.element(document).find('html').addClass('ng-app');

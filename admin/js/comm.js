@@ -6,6 +6,18 @@ define(function (require, exports, module) {
     };
 
     var settings = {
+        default_datas :{
+            ajax_loading: false,  // 是否正在执行ajax
+
+            // 分页参数
+            page_default: 1,        // 默认第一页
+            items_per_page: 10,     // 数据每页显示10条
+            items_num_edge: 3,      // 两侧首尾，主体分页条目数
+            prev_text: "上一页",    // 上一页文字
+            next_text: "下一页",    // 下一页文字
+        },
+        default_page : "dashboard",
+
         is_fake_ajax : is_fake_ajax,
         is_debug : is_debug,
         fake_sms : fake_sms,
@@ -14,20 +26,15 @@ define(function (require, exports, module) {
         msg_duration: 12, //弹出提示框持续时间, 单位:秒
         root: "",
 
-        domain: "../",
-        cross_domain: true,
+        domain: "./api.php?act=",  // 接口地址
+        cross_domain: false,
         ajax_timeout: 30*1000, //ajax超时时间 (单位:毫秒)
-        ajax_url: "ajax_m.php", // 接口路径
 
-        // 分页参数
-        page_default: 1,
-        items_per_page: 10,     // 数据每页显示10条
-        items_num_edge: 3,      // 两侧首尾，主体分页条目数
-        prev_text: "上一页",    // 上一页文字
-        next_text: "下一页",    // 下一页文字
+
 
         ajax_func: {
             login: "login",
+            getLoginCode: "getLoginCode",
             user: "user",
             getList: "getList",
             profile: "profile",
@@ -41,7 +48,7 @@ define(function (require, exports, module) {
         next_text: "下一页",    // 下一页文字
 
         ajax_succ_code : 0,       // ajax 成功code
-        ajax_auth_failed_code : 4,       // ajax 成功code
+        ajax_auth_failed_code : 4,       // ajax 失败code
         ajax_error_msg: {    // ajax请求，错误码对应错误信息
             "0": "请求成功",
             "1": "服务器内部错误",
@@ -226,9 +233,9 @@ define(function (require, exports, module) {
                 tmp.map(function(s){
                     res += "&" + s[0] + "=" + s[1];
                 });
-                //param.sign = hashlib.sha1(res.encode()).hexdigest();
-                param.sign = res;
-                return param;
+                res = res.slice(1, res.length);  // 去除第一个 &
+                // return hashlib.sha1(res.encode()).hexdigest();
+                return res;
             }
             throw new Error("token不存在或参数错误. token:" + token + " param:" + JSON.stringify(param));
         },
@@ -248,8 +255,7 @@ define(function (require, exports, module) {
 
             var _param = param._param || {};
             // 补充 sign 信息
-            _param.sign = global.generateSign(param);
-            console.log(_param);
+            _param = global.generateSign(_param);
 
             var header = {
                 "authorization" : global.generateAuthorization() || "",
@@ -258,19 +264,15 @@ define(function (require, exports, module) {
             var req = {
                 method : method,
                 url: url,
-                cache : param._cache,
+                cache : cache,
                 timeout: timeout,
                 data : _param,
-                params : _param,
-                // headers : header,
+                headers : header,
                 crossDomain : Object.hasOwnProperty(param.crossDomain) ? param.crossDomain : settings.cross_domain,
                 success : function(data) {
-                    if(data.code == 0){
-                        global.write_storage(JSON.stringify(_param), data);
-                    }
                     try{
-                        data =     JSON.parse(data);
-                        data =     JSON.parse(data);
+                        data = JSON.parse(data);
+                        data = JSON.parse(data);
                     } catch(e) {}
 
                     success_func(data);
@@ -288,8 +290,8 @@ define(function (require, exports, module) {
                     global.loading_hide();
                 }
             };
-            console.log("service req: " + JSON.stringify(req));
-            ajax_list.push(jQuery.ajax(req));
+            console.log("service req: ", req);
+            jQuery.ajax(req);
 
             global.loading_num += 1;
             global.loading_show();
@@ -302,7 +304,7 @@ define(function (require, exports, module) {
                 try{
                     setTimeout(function(){
                         return success_func(fake_data[params._url]);
-                    }, 100);
+                    }, 1000);
                 } catch(e) {
                     // pass
                 }
@@ -315,7 +317,7 @@ define(function (require, exports, module) {
                 if ($scope) {
                     $scope.$apply(function(){
                         // 尝试去掉按钮loading状态
-                        $scope.is_loading = false;
+                        $scope.ajax_loading = false;
                     });
                 }
 
@@ -328,8 +330,7 @@ define(function (require, exports, module) {
                 catch(e){}
 
                 try{
-                    if (data.code == settings.ajax_succ_code //接口调用成功
-                        || success_code.indexOf(","+data.code+",") >= 0 ) // 指定code码,不报错
+                    if (data.code == settings.ajax_succ_code || success_code.indexOf(","+data.code+",") >= 0 ) // 指定code码,不报错
                     {
                         success_func(data);
                     }
@@ -372,6 +373,20 @@ define(function (require, exports, module) {
                 console.log("controllers heathit_data result: " + JSON.stringify(data));
                 //接口调用失败, 继续回调
                 success_func({});
+            });
+        },
+
+        return_promise : function ($scope, param) {
+            return new Promise(function(resolve, reject) {
+                global.ajax_data($scope, param,
+                    function (data) {
+                        //接口调用成功
+                        if(data) {
+                            resolve(data);
+                        } else {
+                            reject(data);
+                        }
+                    });
             });
         },
 
@@ -426,7 +441,6 @@ define(function (require, exports, module) {
         check_mobile_number: function(mobile_number){
             var re = /^1[0-9]{10}$/;
             if (!mobile_number || !re.test(mobile_number)) {
-                //alert('您输入的手机号码有误，请重新输入');
                 return false;
             }
             return true;

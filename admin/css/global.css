@@ -10,8 +10,7 @@ body { background: #eee; }
 .top-tabs h1 { padding: 36px 0; font-size: 18px; color: #5e6166; }
 .top-tabs h1 .imgsmall { width: 36px; height: 36px; }
 .top-tabs .nav-tabs { border: none; margin-top: -16px; }
-.top-tabs .nav-tabs li a { cursor: pointer; }
-.top-menus .logo { margin-right: 30px; }
+.top-menus .logo { margin-left:10px; cursor: pointer; }
 .top-menus .menu-right { padding: 10px; }
 .top-menus .menu-right .icons { margin: 0 10px; }
 
@@ -124,4 +123,32 @@ body { background: #eee; }
 
 .icon-order-asc { background: url(../imgs/icon-order-asc.png) center center no-repeat; }
 .icon-order-desc { background: url(../imgs/icon-order-desc.png) center center no-repeat; }
+
+.input-error:after, .input-success:after {
+    content: '';
+    display: inline-block;
+    position: relative;
+    float: right;
+    top: -30px;
+    margin-bottom: -30px;
+    right: 15px;
+    width: 20px; height: 20px;
+    background: url(../imgs/icon-input-success.png) center center no-repeat;
+}
+.input-error:after {
+    background: url(../imgs/icon-input-error.png) center center no-repeat;
+}
+
+
+/* 新登录注册 */
+.login { width:360px; height: 300px; margin:0 auto; text-align: center; }
+.login h1 { font-size: 33px; font-weight: bold; margin-bottom: 20px; color: rgb(40,40,40); }
+.login h5 { font-size: 14px; color:rgb(140,140,140); margin-bottom: 40px; }
+.login .form-control { padding: 9px 20px 9px 40px; font-size: 16px; }
+.login .mobile-input input { background: #fff url(../imgs/icon-input-mobile.png) 12px center no-repeat; }
+.login .code-input input { background: #fff url(../imgs/icon-input-code.png) 12px center no-repeat; }
+.login .code-input { padding-right: 0px; }
+.login .row { margin-bottom:24px; }
+.login .btn-default { height: 42px; width: 100px; }
+.login .btn-primary { width: 100%; height: 42px; font-size: 16px; }
 

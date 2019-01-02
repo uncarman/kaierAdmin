@@ -1,13 +1,27 @@
 var fake_data = {
 	"user" : {
-		code: 1,
+		code: 0,
 		data: {
 			"name": "sam"
 		}
 	},
 
+    "login" : {
+        code: 0,
+        data: {
+            "token": "token-12345"
+        }
+    },
+
+    "getLoginCode" : {
+        code: 0,
+        data: {
+            "code_identity": "code_identity-12345"
+        }
+    },
+
 	"getList": {
-        code: 1,
+        code: 0,
         kind: "auction",
         offset:10,
 		total: 103,
@@ -35,7 +49,7 @@ var fake_data = {
 		]
 	},
     "getList2": {
-        code: 1,
+        code: 0,
         kind: "auction",
         offset:0,
         total: 0,
