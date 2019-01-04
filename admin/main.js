@@ -11,7 +11,7 @@ require.config({
         'angular-async-loader': _cdn+'js/libs/angular_async_loader.min',
         'angular-touch': _cdn+'js/libs/angular_touch.min',
         'angular-animate': _cdn+'js/libs/angular_animate.min',
-        'jquery': _cdn+'js/libs/jquery_1.11.0.min',
+        //'jquery': _cdn+'js/libs/jquery_1.11.0.min',
         "dialog": _cdn+'js/f_ui_dialog',
         "comm": _cdn+'js/comm',
     },

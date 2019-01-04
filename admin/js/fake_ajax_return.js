@@ -55,4 +55,150 @@ var fake_data = {
         total: 0,
         data: []
     },
+
+    "/api/backend/v1/mall/goods": {
+        code: 0,
+        data: {
+            pk : 1,
+            thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
+            posters: [
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                }
+            ],
+            gid: "12345",
+            name: "阿萨德法师法师法师法1234",
+            price: 12.34,
+            deadline: 1546479922704,
+            selltype: "代理",
+            transtype: "自付",
+            sid: 1234,
+            count: 10,
+            info: "PGgxPmFhYWFhPC9oMT4=",
+            minicode: "http://cdn.iciba.com/news/word/20181225.jpg",
+        }
+    },
+    "/api/backend/v1/mall/goods/list": {
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "thumbnail":"缩略图111",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0
+                },
+                {
+                    "pk":"2",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "thumbnail":"缩略图111",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "thumbnail":"缩略图333",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":1
+                }
+            ]
+        }
+    },
+    "/api/backend/v1/mall/goods": {
+        code: 0,
+        data: {},
+    },
+    "/api/backend/v1/mall/pigeon/list": {
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "thumbnail":"缩略图111",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0,
+                    "kind": 1
+                },
+                {
+                    "pk":"2",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "thumbnail":"缩略图111",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0,
+                    "kind": 0
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "thumbnail":"缩略图333",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":1,
+                    "kind": 1
+                }
+            ]
+        }
+    },
+    "/api/backend/v1/mall/pigeon": {
+        code: 0,
+        data: {
+            pk : 1,
+            thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
+            posters: [
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                }
+            ],
+            gid: "12345",
+            name: "阿萨德法师法师法师法1234",
+            price: 12.34,
+            sex: 0,
+            testpic: "http://cdn.iciba.com/news/word/20181225.jpg",
+            minicode: "http://cdn.iciba.com/news/word/20181225.jpg",
+        }
+    },
 }

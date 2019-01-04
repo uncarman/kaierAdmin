@@ -39,6 +39,7 @@ body { background: #eee; }
     filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=6, MakeShadow=false); /* IE6~IE9 */
 }
 
+.debugInfo { margin: 20px 60px; }
 
 /************ loading 提示 ******************/
 .iLoading_overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:99999;width:100%;height:100%;padding:0;background:transparent;display:none}
@@ -138,6 +139,11 @@ body { background: #eee; }
 .input-error:after {
     background: url(../imgs/icon-input-error.png) center center no-repeat;
 }
+
+
+.w30 { width: 30%; display: inline-block; }
+.w50 { width: 50%; display: inline-block; }
+.w80 { width: 80%; display: inline-block; }
 
 
 /* 新登录注册 */

@@ -7,7 +7,38 @@ $default_res = [
 ];
 
 
-if($_act == "getList") {
+if(strpos($_act,'mall/goods/list') !== false) {
+    $res = $default_res;
+    $res["data"] = [
+        "total_num"  => 123,
+        "total_page" => 13,
+        "page" => 2,
+        "items" => []
+    ];
+    $res["data"]["items"] = [
+        [
+            pk => 123,
+            state => 123,
+            thumbnail => "thumbnail",
+            gid => 123,
+            price => 123,
+            count => 123,
+            state => 1,
+            name => "啥时发斯蒂芬1"
+        ],
+        [
+            pk => 123,
+            state => 123,
+            thumbnail => "thumbnail",
+            gid => 123,
+            price => 123,
+            count => 123,
+            state => 1,
+            name => "啥时发斯蒂芬2"
+        ]
+    ];
+}
+else if($_act == "getList") {
     $res = $default_res;
     $res["offset"] = 10;
     $res["total"] = 104;
@@ -34,7 +65,6 @@ if($_act == "getList") {
         ]
     ];
 }
-
 echo json_encode($res);
 
 ?>

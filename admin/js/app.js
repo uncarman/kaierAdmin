@@ -1,7 +1,7 @@
 define(function (require, exports, module) {
     var angular = require('angular');
     var asyncLoader = require('angular-async-loader');
-    var jquery = require('jquery');
+    //var jquery = require('jquery');
     var dialog = require('dialog');
     var comm = require('comm');
 
@@ -27,7 +27,7 @@ define(function (require, exports, module) {
 
     module.exports = {
     	app: app,
-    	jquery: jquery,
+    	//jquery: jquery,
     	dialog: dialog,
     	comm: comm
     };

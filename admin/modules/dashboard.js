@@ -51,12 +51,12 @@ define(function (require) {
                 $scope.ajax_loading = true;
 
                 ajax_data(page).then(function(data){
-                    let total_page = Math.ceil(data.total / settings.items_per_page);
+                    var total_page = Math.ceil(data.total / settings.items_per_page);
                     $scope.$apply(function(){
                         $scope.ajax_loading = false;
                         $scope.datas.dataList = data.data;
                         $scope.datas.pageList = []
-                        for(let i = 1; i<total_page; i++) {
+                        for(var i = 1; i<total_page; i++) {
                             $scope.datas.pageList.push(i);
                         }
                     });

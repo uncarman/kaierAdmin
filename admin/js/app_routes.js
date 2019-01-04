@@ -115,11 +115,17 @@ define(function (require) {
             })
 
             ////////// 鸽业部门
-            .state('pigeonDept_1', {
-                url: '/pigeonDept_1',
-                templateUrl: './modules/pigeonDept/pigeonDept_1.html?v='+version,
-                controllerUrl: './modules/pigeonDept/pigeonDept_1',
-                controller: 'pigeonDept_1'
+            .state('pigeonDept_1_1', {
+                url: '/pigeonDept_1_1',
+                templateUrl: './modules/pigeonDept/pigeonDept_1_1.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_1_1',
+                controller: 'pigeonDept_1_1'
+            })
+            .state('pigeonDept_1_2', {  // 竞价拍卖
+                url: '/pigeonDept_1_2',
+                templateUrl: './modules/pigeonDept/pigeonDept_1_2.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_1_2',
+                controller: 'pigeonDept_1_2'
             })
             .state('pigeonDept_2_1', {  // 竞价拍卖
                 url: '/pigeonDept_2_1',
@@ -206,6 +212,12 @@ define(function (require) {
         return {
             restrict: 'E',
             templateUrl: './components/pagenav.html?v='+version,
+            replace: true,
+        }
+    }).directive('debugInfo', function() {
+        return {
+            restrict: 'E',
+            templateUrl: './components/debuginfo.html?v='+version,
             replace: true,
         }
     });

@@ -1,0 +1,247 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody pigeonDept_1_1">
+
+
+        <div class="form-inline body-header form-withmargin">
+            <button type="button" class="btn btn-primary">创建新商品</button>
+
+            <div class="form-group pull-right" style="margin-left: 30px;">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入环号或商品名搜索">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_data();"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_data(100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_data(0);">编辑中</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="reset_data(1);">上架中</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_data(2);">已下架</button>
+            </div>
+        </div>
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>商品图</th>
+                <th>商品名</th>
+                <th>价格</th>
+                <th>商品编号</th>
+                <th>库存数量</th>
+                <th>当前状态</th>
+                <th>快速操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="7">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.price">--</td>
+                <td ng-bind="d.gid">--</td>
+                <td ng-bind="d.count">--</td>
+                <td><span class="dot-text" ng-bind="datas.goodStates[d.state][0]" ng-class="datas.goodState[d.state][1]">--</span></td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="good_view(d.pk);">查看商品</a></li>
+                            <li><a class="default" ng-click="good_edit(d.pk);">编辑信息</a></li>
+                            <li><a class="default" ng-click="good_remove(d);">删除信息</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+        <!--商品详情-->
+        <div class="modal model-rt" id="goodDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em><span ng-if="datas.good_detail == 'edit'">编辑</span>商品信息</em>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view()" ng-click="good_edit(datas.selected_good.pk);">修改信息</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view()" ng-click="good_update();">保存商品</button>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>图片展示</b>首位为缩略图，展示图最多6张及小于10M的短视频
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <img class="imgmiddle"
+                                         ng-repeat="p in datas.selected_good.posters"
+                                         ng-src="{{p.url}}"
+                                         ng-if="p.kind == 0" >
+                                    <video class="imgmiddle" controls="controls"
+                                           ng-repeat="p in datas.selected_good.posters"
+                                           ng-src="{{p.url}}"
+                                           ng-if="p.kind == 1" >
+                                        您的浏览器不支持 video 标签。
+                                    </video>
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <a ng-click="add_posters();" ng-show="datas.selected_good.posters.length < 6">上传文件</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>商品信息</b>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        商品编号:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.pk" ng-show="is_view()"></span>
+                                        <input class="form-control w30" disabled  ng-show="!is_view()" ng-model="datas.selected_good.pk">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        商品名:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.name" ng-show="is_view()"></span>
+                                        <input class="form-control w80" ng-show="!is_view()" ng-model="datas.selected_good.name">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        商品售价:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.price" ng-show="is_view()"></span>
+                                        <input class="form-control w30"  ng-show="!is_view()" ng-model="datas.selected_good.price">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        有效期至:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.deadline" ng-show="is_view()"></span>
+                                        <input class="form-control w30" ng-show="!is_view()" ng-model="datas.selected_good.deadline">
+                                        <span class="text-warning" ng-show="!is_view()">不填写则显示为库存充足</span>
+                                    </div>
+                                </div>
+                                <div class="row form-inline">
+                                    <div class="col-sm-2 row-title">
+                                        销售方式:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_good.selltype" ng-show="is_view()"></span>
+                                        <select class="form-control" ng-show="!is_view()">
+                                            <option value="{{t}}"
+                                                    ng-repeat="t in datas.goodSelltypes"
+                                                    ng-bind="t"
+                                                    ng-selected="datas.selected_good.selltype==t"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        邮费方案:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_good.transtype" ng-show="is_view()"></span>
+                                        <select class="form-control" ng-show="!is_view()">
+                                            <option value="{{t}}"
+                                                    ng-repeat="t in datas.goodTranstypes"
+                                                    ng-bind="t"
+                                                    ng-selected="datas.selected_good.transtype==t"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!--<div class="row">-->
+                                    <!--<div class="col-sm-2 row-title">-->
+                                        <!--规则描述:-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-10 row-content">-->
+                                        <!--<span ng-bind="datas.selected_good.info" ng-show="is_view()"></span>-->
+                                        <!--<input class="form-control w30"  ng-show="!is_view()" ng-model="datas.selected_good.info">-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存号:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.sid" ng-show="is_view()"></span>
+                                        <input class="form-control w30"  ng-show="!is_view()" ng-model="datas.selected_good.sid">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存量:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind="datas.selected_good.count" ng-show="is_view()"></span>
+                                        <input class="form-control w30" ng-show="!is_view()" ng-model="datas.selected_good.count">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        图文介绍:
+                                    </div>
+                                    <div class="col-sm-10 row-content">
+                                        <span ng-bind-html="datas.selected_good.info_h5" ng-show="is_view()"></span>
+                                        <textarea class="form-control w80" ng-show="!is_view()" ng-model="datas.selected_good.info_h5"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>小程序码</b>
+                                    已上架的商品，可以通过此小程序码访问
+                                    <a style="margin-left:20px;">下载</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <img class="imgbig" ng-src="{{datas.selected_good.minicode}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

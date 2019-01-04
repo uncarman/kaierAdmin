@@ -102,7 +102,7 @@ define(function (require) {
                 _method: 'get',
                 _url: settings.ajax_func.getLoginCode,
                 _param: {
-                    mobile: $scope.datas.mobile,
+                    phone: $scope.datas.mobile,
                 }
             };
             return global.return_promise($scope, param);

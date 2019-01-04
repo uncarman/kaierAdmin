@@ -15,6 +15,30 @@ define(function (require, exports, module) {
             items_num_edge: 3,      // 两侧首尾，主体分页条目数
             prev_text: "上一页",    // 上一页文字
             next_text: "下一页",    // 下一页文字
+
+            goodSelltypes: [ "自营", "代理" ],
+            goodTranstypes: [ "自付", "包邮" ],
+            goodStates: {
+                0: ["编辑中", "dot-default"],
+                1: ["上架中", "dot-primary"],
+                2: ["已下架", "dot-danger"],
+            },
+
+            pigeonKinds: {
+                0: "定价",
+                1: "竞价",
+            },
+            pigeonStates: {
+                0: ["编辑中", "dot-default"],
+                1: ["上架中", "dot-primary"],
+                2: ["已下架", "dot-danger"],
+                3: ["拍出", "dot-default"],
+                4: ["流拍", "dot-danger"],
+            },
+            pigeonSexs: {
+                0: "雄",
+                1: "雌"
+            }
         },
         default_page : "dashboard",
 
@@ -26,18 +50,28 @@ define(function (require, exports, module) {
         msg_duration: 12, //弹出提示框持续时间, 单位:秒
         root: "",
 
-        domain: "./api.php?act=",  // 接口地址
-        cross_domain: false,
+        domain: "http://47.104.77.161",  // 接口地址
+        cross_domain: true,
         ajax_timeout: 30*1000, //ajax超时时间 (单位:毫秒)
 
 
 
         ajax_func: {
             login: "login",
-            getLoginCode: "getLoginCode",
+            getLoginCode: "api/backend/v1/base/verify",
             user: "user",
             getList: "getList",
             profile: "profile",
+
+            "baseUpload": "/api/backend/v1/base/upload", // 上传文件
+
+            "mallGoodsList": "/api/backend/v1/mall/goods/list", // 商城商品列表 ?state={state}&query={query}&page={page}
+            "mailGoods" : "/api/backend/v1/mall/goods", // 商品详情 ?pk={pk}
+            "mailGoodsUpdate" : "/api/backend/v1/mall/goods", // 商品编辑
+
+            "mallPigeonList": "/api/backend/v1/mall/pigeon/list", // 商品鸽列表 ?query={query}&page={page}
+            "mallPigeon": "/api/backend/v1/mall/pigeon", // 商品鸽信息 ?query={query}&page={page}
+            "mailPigeonUpdate": "/api/backend/v1/mall/pigeon", // 商品鸽信息 ?query={query}&page={page}
 
         },
 
@@ -93,9 +127,22 @@ define(function (require, exports, module) {
                 "children": [
                     {
                         "page": "pigeonDept_1",
-                        "link": "pigeonDept_1",
+                        "link": "pigeonDept_1_1",
                         "name": "商品管理",
                         "icon": "imgs/default_header_icon.png",
+                        "children": [
+                            {
+                                "page": "pigeonDept_1_1",
+                                "name": "商城商品",
+                                "link": "pigeonDept_1_1",
+                            },
+                            {
+                                "page": "pigeonDept_1_2",
+                                "name": "拍卖商品",
+                                "icon": "",
+                                "link": "pigeonDept_1_2",
+                            }
+                        ]
                     },
                     {
                         "page": "pigeonDept_2",
@@ -254,12 +301,19 @@ define(function (require, exports, module) {
             var cache = !!np._cache;
 
             var _param = param._param || {};
-            // 补充 sign 信息
-            _param = global.generateSign(_param);
 
-            var header = {
-                "authorization" : global.generateAuthorization() || "",
-            };
+            // 替换 url 中的参数
+            for(o in _param) {
+                url = url.replace("{"+o+"}", _param[o]);
+            }
+
+
+            // 补充 sign 信息
+            //_param = global.generateSign(_param);
+
+            // var header = {
+            //     "authorization" : global.generateAuthorization() || "",
+            // };
 
             var req = {
                 method : method,
@@ -267,14 +321,14 @@ define(function (require, exports, module) {
                 cache : cache,
                 timeout: timeout,
                 data : _param,
-                headers : header,
+                //headers : header,
                 crossDomain : Object.hasOwnProperty(param.crossDomain) ? param.crossDomain : settings.cross_domain,
                 success : function(data) {
                     try{
                         data = JSON.parse(data);
                         data = JSON.parse(data);
                     } catch(e) {}
-
+                    console.log(url, data);
                     success_func(data);
                     global.loading_num -= 1;
                     global.loading_hide();
@@ -290,6 +344,15 @@ define(function (require, exports, module) {
                     global.loading_hide();
                 }
             };
+
+            // 添加formData需要的参数
+            if(param["_is_form_file"] === true) {
+                req.dataType = "json";
+                req.cache = false; // 上传文件无需缓存
+                req.processData = false; // 用于对data参数进行序列化处理 这里必须false
+                req.contentType = false; // 必须
+            }
+
             console.log("service req: ", req);
             jQuery.ajax(req);
 
@@ -388,6 +451,20 @@ define(function (require, exports, module) {
                         }
                     });
             });
+        },
+
+        get_datas_prev: function  ($scope) {
+            var page = Math.max(1,($scope.datas.cur_page-1));
+            if(page != $scope.datas.cur_page) {
+                $scope.get_datas(page);
+            }
+        },
+
+        get_datas_next : function ($scope) {
+            var page = Math.min($scope.datas.pageList.length,($scope.datas.cur_page+1));
+            if(page != $scope.datas.pageList.length) {
+                $scope.get_datas(page);
+            }
         },
 
         // 格式化数字，直接舍去小数点后面的位数
@@ -906,6 +983,9 @@ define(function (require, exports, module) {
 
             // 复用 goto 函数到每个页面, 因统计代码所需, 挪至最前面
             $scope["goto"] = global["goto"];
+            $scope.get_datas_prev = global.get_datas_prev;
+            $scope.get_datas_next = global.get_datas_next;
+
             $scope.topMenuClick = global.topMenuClick;
             //$scope.pageInit = global.pageInit;
             $scope.settings = settings;
