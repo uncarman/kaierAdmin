@@ -56,6 +56,13 @@ var fake_data = {
         data: []
     },
 
+    "/api/backend/v1/base/upload": {
+        code: 0,
+        data: {
+            "url": "http://cdn.iciba.com/news/word/20181225.jpg"
+        }
+    },
+
     "/api/backend/v1/mall/goods": {
         code: 0,
         data: {
@@ -129,7 +136,33 @@ var fake_data = {
     },
     "/api/backend/v1/mall/goods": {
         code: 0,
-        data: {},
+        data: {
+            pk : 1,
+            thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
+            posters: [
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                },
+                {
+                    kind:0,
+                    url: "http://cdn.iciba.com/news/word/20181225.jpg",
+                }
+            ],
+            gid: "12345",
+            name: "阿萨德法师法师法师法1234",
+            price: 12.34,
+            selltype: "代理",
+            transtype: "包邮",
+            sid: 123,
+            count:10,
+            testpic: "http://cdn.iciba.com/news/word/20181225.jpg",
+            minicode: "http://cdn.iciba.com/news/word/20181225.jpg",
+        },
     },
     "/api/backend/v1/mall/pigeon/list": {
         code: 0,
@@ -201,4 +234,92 @@ var fake_data = {
             minicode: "http://cdn.iciba.com/news/word/20181225.jpg",
         }
     },
+
+    "/api/backend/v1/mall/auction/list": {
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "cover":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0,
+                    "kind": 1
+                },
+                {
+                    "pk":"2",
+                    "gid":"编号111",
+                    "name":"商品名111",
+                    "cover":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":0,
+                    "kind": 0
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "cover":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "count":"5",
+                    "state":1,
+                    "kind": 1
+                }
+            ]
+        }
+    },
+    "api/backend/v1/mall/auction/state": {
+        code: 0,
+        data: {},
+    },
+    "/api/backend/v1/mall/auction": {
+        code: 0,
+        data: {},
+    },
+    "/api/backend/v1/mall/auction/pigeon/list": {
+        code: 0,
+        data: [
+            {
+                sn:1,
+                pk:11,
+                gid:123,
+                price: 112,
+                offer:333,
+                state:1
+            },
+            {
+                sn:2,
+                pk:11,
+                gid:124,
+                price: 112,
+                offer:333,
+                state:0
+            }
+        ],
+    },
+    "/api/backend/v1/mall/pigeons": {
+        code: 0,
+        data: [
+            {
+                gid:123,
+                thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
+                name:"asdfsafsf",
+            },
+            {
+                gid:124,
+                thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
+                name:"asdfsafsf",
+            }
+        ],
+    }
 }

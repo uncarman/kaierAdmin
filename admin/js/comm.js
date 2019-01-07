@@ -38,7 +38,20 @@ define(function (require, exports, module) {
             pigeonSexs: {
                 0: "雄",
                 1: "雌"
-            }
+            },
+
+
+            auctionStatesStates: {
+                0: ["编辑中", "dot-default"],
+                1: ["拍卖中", "dot-primary"],
+                2: ["已结束", "dot-danger"],
+            },
+
+            auctionPigeonStates: {
+                0: ["拍卖中", "dot-primary"],
+                1: ["已卖出", "dot-default"],
+                2: ["流拍", "dot-danger"],
+            },
         },
         default_page : "dashboard",
 
@@ -65,13 +78,23 @@ define(function (require, exports, module) {
 
             "baseUpload": "/api/backend/v1/base/upload", // 上传文件
 
+            // pigeonDept_1_1
             "mallGoodsList": "/api/backend/v1/mall/goods/list", // 商城商品列表 ?state={state}&query={query}&page={page}
             "mailGoods" : "/api/backend/v1/mall/goods", // 商品详情 ?pk={pk}
             "mailGoodsUpdate" : "/api/backend/v1/mall/goods", // 商品编辑
 
+            // pigeonDept_1_2
             "mallPigeonList": "/api/backend/v1/mall/pigeon/list", // 商品鸽列表 ?query={query}&page={page}
             "mallPigeon": "/api/backend/v1/mall/pigeon", // 商品鸽信息 ?query={query}&page={page}
             "mailPigeonUpdate": "/api/backend/v1/mall/pigeon", // 商品鸽信息 ?query={query}&page={page}
+
+            // pigeonDept_2_1
+            "mallAuctionList": "/api/backend/v1/mall/auction/list",   // Mall - 拍卖场列表
+            "mallAuctionState": "/api/backend/v1/mall/auction/state",   // Mall - 拍卖场状态修改
+            "mallAuction": "/api/backend/v1/mall/auction",   // Mall -  拍卖场编辑
+            "mallAuctionPigeonList": "/api/backend/v1/mall/auction/pigeon/list", // Mall - 竞拍场鸽单
+            "mallPigeons": "/api/backend/v1/mall/pigeons", // Mall - 商品鸽搜索
+            "mallAuctionPigeon": "/api/backend/v1/mall/auction/pigeon", // Mall - 拍卖场鸽单编辑
 
         },
 
@@ -366,7 +389,11 @@ define(function (require, exports, module) {
             if(settings.is_fake_ajax) {
                 try{
                     setTimeout(function(){
-                        return success_func(fake_data[params._url]);
+                        if(fake_data[params._url]) {
+                            return success_func(fake_data[params._url]);
+                        } else {
+                            return success_func({"code":0, "data": {}});
+                        }
                     }, 1000);
                 } catch(e) {
                     // pass
@@ -961,46 +988,6 @@ define(function (require, exports, module) {
             }, frequency);
         },
 
-        // 页面载入时通用初始化函数
-        on_load_func: function(){
-            // 增加 loading 状态
-            global.loading_num += 1;
-            global.loading_show();
-
-            // 前端校验用户登录
-            var _session = global.read_storage('session');
-            var token = _session.token;
-            if(!token) {
-                global["goto"]('login');
-            }
-        },
-
-        // 页面载入完成后调用函数
-        on_loaded_func: function($scope){
-            // 移除 loading 状态
-            global.loading_num -= 1;
-            global.loading_hide();
-
-            // 复用 goto 函数到每个页面, 因统计代码所需, 挪至最前面
-            $scope["goto"] = global["goto"];
-            $scope.get_datas_prev = global.get_datas_prev;
-            $scope.get_datas_next = global.get_datas_next;
-
-            $scope.topMenuClick = global.topMenuClick;
-            //$scope.pageInit = global.pageInit;
-            $scope.settings = settings;
-            //var page = global.get_current_page();
-
-            //$("#page_loading").hide();
-            //$(".mainbody").addClass("mainbody_show");
-
-            // 初始化当前公共模块(菜单)
-            global.init_comm($scope);
-
-            //gtm使用的scope对象
-            window._scope = $scope;  // 标记局部变量，提供给外部访问
-        },
-
         get_current_page: function(){
             // 根据页面名字修改body的class
             var url_list = window.location.href.split("#").pop();
@@ -1012,6 +999,204 @@ define(function (require, exports, module) {
             console.log(page);
             return page;
         },
+
+        // 页面载入时通用初始化函数
+        on_load_func: function($scope){
+            // 增加 loading 状态
+            global.loading_num += 1;
+            global.loading_show();
+
+            // 添加公共函数给 $scope
+            $scope["goto"] = global["goto"];
+            $scope.ajax_catch = global.ajax_catch;
+            $scope.get_datas = global.get_datas;
+            $scope.reset_datas = global.reset_datas;
+            $scope.is_view = global.is_view;
+            $scope.item_view = global.item_view;
+            $scope.item_edit = global.item_edit;
+            $scope.item_update = global.item_update;
+            $scope.item_remove = global.item_remove;
+            $scope.remove_poster = global.remove_poster;
+            //$scope.ajax_base_upload = global.ajax_base_upload;
+            $scope.get_datas_next = global.get_datas_next;
+            $scope.get_datas_prev = global.get_datas_prev;
+            $scope.get_datas_next = global.get_datas_next;
+            $scope.topMenuClick = global.topMenuClick;
+
+            // 前端校验用户登录
+            var _session = global.read_storage('session');
+            var token = _session.token;
+            if(!token) {
+                global["goto"]('login');
+            }
+        },
+
+        // 页面载入完成后调用函数
+        on_loaded_func: function($scope){
+            $scope.settings = settings;
+
+            // 移除 loading 状态
+            global.loading_num -= 1;
+            global.loading_hide();
+
+            // 初始化当前公共模块(菜单)
+            global.init_comm($scope);
+
+            //gtm使用的scope对象
+            window._scope = $scope;  // 标记局部变量，提供给外部访问
+        },
+
+        ajax_catch: function(data) {
+            console.log("ajax_catch", data);
+            alert("获取数据失败:"+data.error);
+        },
+
+        get_datas: function ($scope, page) {
+            if(!$scope.ajax_loading) {
+                $scope.datas.cur_page = page || $scope.datas.page_default;
+                $scope.ajax_loading = true;
+
+                $scope.ajax_data()
+                    .then($scope.get_datas_callback)
+                    .catch($scope.ajax_catch);
+            }
+        },
+
+        reset_datas: function($scope, tp) {
+            $scope.datas.cur_page = 1;
+            try {
+                $scope.datas.opt.state = typeof tp != "undefined" ? tp : $scope.datas.opt.state;
+            } catch (ex) {
+                // pass
+            }
+            $scope.get_datas($scope);
+        },
+
+        is_view: function ($scope) {
+            return $scope.datas.item_view_type == "view";
+        },
+
+        item_view: function($scope, pk) {
+            $scope.ajax_item_detail(pk)
+                .then($scope.item_view_callback)
+                .catch($scope.ajax_catch);
+        },
+
+        item_edit: function($scope, pk) {
+            $scope.ajax_item_detail(pk)
+                .then($scope.item_edit_callback)
+                .catch($scope.ajax_catch);
+        },
+
+        item_update: function ($scope) {
+            $scope.ajax_item_update()
+                .then($scope.item_update_callback)
+                .catch($scope.ajax_catch);
+        },
+
+        item_remove: function($scope, good) {
+            MyConfirm({
+                showTitleBtn: false,
+                txtTitle: "确定删除?",
+                //txtContent: "<div style='text-align: center; margin-bottom: 20px;'>"+good.name+"</div>",
+                _OK: function(obj){
+                    $scope.ajax_remove_data(good.pk)
+                        .then($scope.item_remove_callback)
+                        .catch($scope.ajax_catch);
+                    obj.hide();
+                },
+                _Cancel: function(obj){
+                    obj.hide();
+                },
+                isBtnOkHide: false,
+                isBtnCancelHide: false,
+            });
+        },
+
+        base_add_files: function ($scope, fileId, type) {
+            $("#"+fileId).off("change").on("change", function () {
+                var fileObj = document.getElementById(fileId).files[0]; // js 获取文件对象
+                console.log(fileObj);
+                if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                    return;
+                }
+                var formFile = new FormData();
+                formFile.append("file", fileObj); //加入文件对象
+
+                var file_kind = 0;
+                if((fileObj.type).indexOf("image/")>=0){
+                    file_kind = 0;
+                } else if((fileObj.type).indexOf("video/")>=0) {
+                    file_kind = 1;
+                } else {
+                    alert("只能上传图片或视频");
+                }
+                $scope.datas.upload_file_type = type;
+                $scope.datas.upload_file_file_kind = file_kind;
+                global.ajax_base_upload($scope, formFile)
+                    .then($scope.add_file_callback)
+                    .catch($scope.ajax_catch);
+            }).click();
+        },
+
+        remove_poster: function (ind) {
+            if($scope.datas.selected_item && $scope.datas.selected_item["posters"].length > 0) {
+                try {
+                    $scope.datas.selected_item["posters"].splice(ind, 1);
+                    if($scope.datas.selected_item["posters"].length <= 0) {
+                        $scope.datas.selected_item["thumbnail"] = "";
+                    }
+                } catch (e) {
+                    // pass
+                }
+            }
+        },
+
+        // 上传文件
+        ajax_base_upload: function ($scope, formFile) {
+            var param = {
+                _method: 'post',
+                _url: settings.ajax_func.baseUpload,
+                _is_form_file: true,
+                _param: formFile
+            };
+            return global.return_promise($scope, param);
+        },
+
+        // add_posters: function ($scope) {
+        //     if($scope.datas.selected_good["pk"] != "") {
+        //         $("#poster_file").click();
+        //         $("#poster_file").off("change").on("change", function () {
+        //             var fileObj = document.getElementById("poster_file").files[0]; // js 获取文件对象
+        //             console.log(fileObj);
+        //             if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+        //                 return;
+        //             }
+        //             var formFile = new FormData();
+        //             formFile.append("file", fileObj); //加入文件对象
+        //
+        //             var file_kind = 0;
+        //             if((fileObj.type).indexOf("image/")>=0){
+        //                 file_kind = 0;
+        //             } else if((fileObj.type).indexOf("video/")>=0) {
+        //                 file_kind = 1;
+        //             } else {
+        //                 alert("只能上传图片或视频");
+        //             }
+        //
+        //             global.ajax_base_upload($scope, formFile).then(function(data){
+        //                 $scope.$apply(function () {
+        //                     $scope.datas.selected_item["posters"].push({
+        //                         kind: file_kind,
+        //                         url: data.data.url,
+        //                     });
+        //                 });
+        //             }).catch(function(data){
+        //                 alert("获取数据失败(add_posters):"+data.error);
+        //             });
+        //         });
+        //     }
+        // },
 
         /**
          * ajax等待层处理
@@ -1384,6 +1569,10 @@ define(function (require, exports, module) {
         return -1;
     }
 
+    // 扩展function的getName方法
+    Function.prototype.getName = function(){
+        return this.name || this.toString().match(/function\s*([^(]*)\(/)[1]
+    }
 
     module.exports = {
         session: session,

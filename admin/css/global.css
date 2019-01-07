@@ -125,6 +125,8 @@ body { background: #eee; }
 .icon-order-asc { background: url(../imgs/icon-order-asc.png) center center no-repeat; }
 .icon-order-desc { background: url(../imgs/icon-order-desc.png) center center no-repeat; }
 
+.icon-remove { background: url(../imgs/icon-remove.png) center center no-repeat; position: absolute; }
+
 .input-error:after, .input-success:after {
     content: '';
     display: inline-block;

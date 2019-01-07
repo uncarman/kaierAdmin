@@ -93,14 +93,16 @@ a:hover,a:active { color: #0b78ff; }
 .model-rt .modal-body .section .section-title b { color: #000; font-size: 14px; font-weight: bold; margin-right: 8px; vertical-align: middle; }
 .model-rt .modal-body .section .form-row .row-title { width:85px; padding-right: 0px; }
 
-.model-rt .section .imgmiddle:before { content: ""; display: inline-block; width: 20px; height: 20px; }
-
 	/** table 里内容 **/
 .label { font-size: 14px; line-height: 30px; }
 .--primary { background-color:#c8def5; color: #0f84fe; border: 1px solid #0f84fe; border-radius: 4px; font-weight: normal; z-index: 1000; }
-.imgsmall { width: 48px; height:48px; margin-right: 8px; }
-.imgmiddle { width: 98px; height:98px; margin-right: 8px; margin-bottom: 8px; }
+.imgsmall { width: 50px; height:50px; margin-right: 8px; }
+.imgmiddle { width: 100px; height:100px; margin-right: 8px; margin-bottom: 8px; }
 .imgbig { width: 160px; height:160px; margin-right: 8px; margin-bottom: 8px; }
+.imgmiddle .icon-remove { margin-left: 80px; }
+.imgbig .icon-remove { margin-left: 140px; }
+.upload-file .icon-remove { margin-left: 110px; }
+
 
 .body-header .form-control, .body-header .input-group-addon { padding: 6px 12px; height: 34px; }
 .body-header .btn-primary, .body-header .btn-default { height: 40px; }

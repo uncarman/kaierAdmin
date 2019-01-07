@@ -6,13 +6,13 @@
 
 
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary">创建新鸽</button>
+            <button type="button" class="btn btn-primary" ng-click="item_create();">创建新鸽</button>
 
             <div class="form-group pull-right" style="margin-left: 30px;">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入环号或商品名搜索">
                     <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-search" ng-click="reset_data();"></span>
+                        <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
                     </div>
                 </div>
             </div>
@@ -20,7 +20,7 @@
 
 
         <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
-        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+        <table class="table table-hover" ng-show="!ajax_loading && datas.dataList.length > 0">
             <thead>
                 <tr>
                     <th>商品图</th>
@@ -33,10 +33,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <tr ng-if="!ajax_loading && datas.dataList.length <= 0">
                     <td colspan="7">没有数据</td>
                 </tr>
-                <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
                     <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
                     <td ng-bind="d.name">--</td>
                     <td ng-bind="d.price">--</td>
@@ -48,9 +48,9 @@
                             <span class="icons glyphicon glyphicon-option-horizontal"
                                   id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
-                                <li><a class="default" ng-click="good_view(d.pk);">查看商品</a></li>
-                                <li><a class="default" ng-click="good_edit(d.pk);">编辑信息</a></li>
-                                <li><a class="default" ng-click="good_remove(d);">删除信息</a></li>
+                                <li><a class="default" ng-click="item_view(this, d.pk);">查看商品</a></li>
+                                <li><a class="default" ng-click="item_edit(this, d.pk);">编辑信息</a></li>
+                                <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
                             </ul>
                         </div>
                     </td>
@@ -59,9 +59,9 @@
         </table>
         <div class="clearfix"></div>
 
-        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+        <page-nav ng-show="!ajax_loading && datas.dataList.length > 0"></page-nav>
 
-        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+        <p id="data_no_item" ng-show="!ajax_loading && datas.dataList.length <= 0" class="nodatas">
             <span class="icons info_icon"></span>
             没有数据
         </p>
@@ -74,11 +74,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title form-inline">
-                            <em><span ng-if="datas.good_detail == 'edit'">编辑</span>鸽信息</em>
+                            <em><span ng-if="datas.item_view == 'edit'">编辑</span>鸽信息</em>
                             <div class="pull-right">
                                 <button class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view()" ng-click="good_edit(datas.selected_good.pk);">修改信息</button>
-                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view()" ng-click="good_update();">保存商品</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="item_edit(this, datas.selected_item.pk);">修改信息</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view(this)" ng-click="item_update(this);">保存商品</button>
                             </div>
                         </h4>
                     </div>
@@ -91,17 +91,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <img class="imgmiddle"
-                                         ng-repeat="p in datas.selected_good.posters"
-                                         ng-src="{{p.url}}"
-                                         ng-if="p.kind == 0" >
+                                    <span class="imgmiddle" ng-repeat="p in datas.selected_item.posters">
+                                        <span class="icons icon-remove" ng-click="remove_poster($index);"></span>
+                                        <img class="imgmiddle"
+                                             ng-src="{{p.url}}"
+                                             ng-if="p.kind == 0">
+                                        <video class="imgmiddle" controls="controls"
+                                               ng-src="{{p.url}}"
+                                               ng-if="p.kind == 1" >
+                                            您的浏览器不支持 video 标签。
+                                        </video>
+                                    </span>
 
-                                    <video controls="controls"
-                                           ng-repeat="p in datas.selected_good.posters"
-                                           ng-src="{{p.url}}"
-                                           ng-if="p.kind == 1" >
-                                        您的浏览器不支持 video 标签。
-                                    </video>
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <a ng-click="add_files();" ng-show="!is_view(this) && datas.selected_item.posters.length < 6">上传文件</a>
                                 </div>
                             </div>
                         </div>
@@ -109,6 +112,7 @@
                             <div class="row">
                                 <div class="col-sm-12 section-title">
                                     <b>商品信息</b>
+                                    <input class="form-control" type="hidden" ng-model="datas.selected_item.pk">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -117,8 +121,8 @@
                                         鸽环号:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-bind="datas.selected_good.pk" ng-show="is_view()"></span>
-                                        <input class="form-control w30" disabled  ng-show="!is_view()" ng-model="datas.selected_good.pk">
+                                        <span ng-bind="datas.selected_item.gid" ng-show="is_view(this)"></span>
+                                        <input class="form-control w30"  ng-show="!is_view(this)" ng-model="datas.selected_item.gid">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -126,8 +130,8 @@
                                         鸽标题:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-bind="datas.selected_good.name" ng-show="is_view()"></span>
-                                        <input class="form-control w80" ng-show="!is_view()" ng-model="datas.selected_good.name">
+                                        <span ng-bind="datas.selected_item.name" ng-show="is_view(this)"></span>
+                                        <input class="form-control w80" ng-show="!is_view(this)" ng-model="datas.selected_item.name">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -135,8 +139,8 @@
                                         起拍价:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-bind="datas.selected_good.price" ng-show="is_view()"></span>
-                                        <input class="form-control w30"  ng-show="!is_view()" ng-model="datas.selected_good.price">
+                                        <span ng-bind="datas.selected_item.price" ng-show="is_view(this)"></span>
+                                        <input class="form-control w30"  ng-show="!is_view(this)" ng-model="datas.selected_item.price">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -144,8 +148,8 @@
                                         库存量:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-show="is_view()">1羽</span>
-                                        <input class="form-control w30" ng-show="!is_view()" value="1" disabled />
+                                        <span ng-show="is_view(this)">1羽</span>
+                                        <input class="form-control w30" ng-show="!is_view(this)" value="1" disabled />
                                     </div>
                                 </div>
                                 <div class="row form-inline">
@@ -153,12 +157,12 @@
                                         鸽性别:
                                     </div>
                                     <div class="col-sm-4 row-content">
-                                        <span ng-bind="datas.pigeonSexs[datas.selected_good.sex]" ng-show="is_view()"></span>
-                                        <select class="form-control" ng-show="!is_view()">
+                                        <span ng-bind="datas.pigeonSexs[datas.selected_item.sex]" ng-show="is_view(this)"></span>
+                                        <select class="form-control" ng-show="!is_view(this)">
                                             <option value="{{t}}"
                                                     ng-repeat="t in datas.pigeonSexs"
                                                     ng-bind="t"
-                                                    ng-selected="datas.selected_good.sex==t"></option>
+                                                    ng-selected="datas.selected_item.sex==t"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -167,8 +171,8 @@
                                 <!--规则描述:-->
                                 <!--</div>-->
                                 <!--<div class="col-sm-10 row-content">-->
-                                <!--<span ng-bind="datas.selected_good.info" ng-show="is_view()"></span>-->
-                                <!--<input class="form-control w30"  ng-show="!is_view()" ng-model="datas.selected_good.info">-->
+                                <!--<span ng-bind="datas.selected_item.info" ng-show="is_view(this)"></span>-->
+                                <!--<input class="form-control w30"  ng-show="!is_view(this)" ng-model="datas.selected_item.info">-->
                                 <!--</div>-->
                                 <!--</div>-->
                                 <div class="row">
@@ -176,12 +180,12 @@
                                         鸽测评:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-show="is_view()">
+                                        <span ng-show="is_view(this)">
                                             <img class="imgmiddle"
-                                                 ng-src="{{datas.selected_good.testpic}}"
-                                                 ng-if="datas.selected_good.testpic != ''" >
+                                                 ng-src="{{datas.selected_item.testpic}}"
+                                                 ng-if="datas.selected_item.testpic != ''" >
                                         </span>
-                                        <a ng-show="!is_view()">上传</a>
+                                        <a ng-show="!is_view(this)" ng-click="add_files('testpic');">上传</a>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -189,8 +193,8 @@
                                         血统介绍:
                                     </div>
                                     <div class="col-sm-10 row-content">
-                                        <span ng-bind-html="datas.selected_good.info_h5" ng-show="is_view()"></span>
-                                        <textarea class="form-control w80" ng-show="!is_view()" ng-model="datas.selected_good.info_h5"></textarea>
+                                        <span ng-bind-html="datas.selected_item.info_h5" ng-show="is_view(this)"></span>
+                                        <textarea class="form-control w80" ng-show="!is_view(this)" ng-model="datas.selected_item.info_h5"></textarea>
                                     </div>
                                 </div>
 
@@ -206,7 +210,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 row-content">
-                                    <img class="imgbig" ng-src="{{datas.selected_good.minicode}}">
+                                    <img class="imgbig" ng-src="{{datas.selected_item.minicode}}">
                                 </div>
                             </div>
                         </div>
