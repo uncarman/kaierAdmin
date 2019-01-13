@@ -52,6 +52,22 @@ define(function (require, exports, module) {
                 1: ["已卖出", "dot-default"],
                 2: ["流拍", "dot-danger"],
             },
+
+            staticStates: {
+                0: ["上架中", "dot-primary"],
+                2: ["已下架", "dot-danger"],
+                1: ["拍出", "dot-default"],
+            },
+
+            suggestGoodsStates: {
+                0: ["上架中", "dot-primary"],
+                1: ["已下架", "dot-danger"],
+            },
+
+            catGoodsStates: {
+                0: ["上架中", "dot-primary"],
+                1: ["已下架", "dot-danger"],
+            }
         },
         default_page : "dashboard",
 
@@ -95,6 +111,21 @@ define(function (require, exports, module) {
             "mallAuctionPigeonList": "/api/backend/v1/mall/auction/pigeon/list", // Mall - 竞拍场鸽单
             "mallPigeons": "/api/backend/v1/mall/pigeons", // Mall - 商品鸽搜索
             "mallAuctionPigeon": "/api/backend/v1/mall/auction/pigeon", // Mall - 拍卖场鸽单编辑
+
+            // pigeonDept_2_2
+            "mallStaticPigeonList": "/api/backend/v1/mall/static/pigeon/list", // Mall - 定价鸽单
+            "mallStaticPigeon": "/api/backend/v1/mall/static/pigeon", // Mall - 定价鸽单编辑
+
+            // pigeonDept_2_3
+            "mallSuggestGoodsList": "/api/backend/v1/mall/suggest/goods/list", // Mall - 商城优选
+            "mallSuggestGoods": "/api/backend/v1/mall/suggest/goods", // Mall - 商城优选编辑
+            "mallGoodsList": "/api/backend/v1/mall/goods/list", // Mall - 商城商品列表
+
+            // pigeonDept_2_4
+            "mallCatList": "/api/backend/v1/mall/cat/list", // Mall - 商城-分类列表
+            "mallCatGoodsList": "/api/backend/v1/mall/cat/goods/list",  // Mall - 商城-分类商品
+            "mallCatGoods": "/api/backend/v1/mall/cat/goods",  // Mall - 商城-分类商品编辑
+
 
         },
 
@@ -390,6 +421,7 @@ define(function (require, exports, module) {
                 try{
                     setTimeout(function(){
                         if(fake_data[params._url]) {
+                            console.log(params._url, fake_data[params._url]);
                             return success_func(fake_data[params._url]);
                         } else {
                             return success_func({"code":0, "data": {}});

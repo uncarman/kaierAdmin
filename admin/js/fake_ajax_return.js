@@ -313,13 +313,151 @@ var fake_data = {
             {
                 gid:123,
                 thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
-                name:"asdfsafsf",
+                name:"鸽子的商品标题显示在这里1",
             },
             {
                 gid:124,
                 thumbnail: "http://cdn.iciba.com/news/word/20181225.jpg",
-                name:"asdfsafsf",
+                name:"鸽子的商品标题显示在这里2",
             }
         ],
+    },
+    "/api/backend/v1/mall/static/pigeon/list": {
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"123",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "state":0,
+                },
+                {
+                    "pk":"2",
+                    "gid":"124",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "state":0,
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    "state":1,
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/mall/suggest/goods/list":{
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"123",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    count:"1",
+                    "state":1,
+                },
+                {
+                    "pk":"2",
+                    "gid":"124",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    count:"2",
+                    "state":0,
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    sn:"序号",
+                    count:"3",
+                    "state":1,
+                }
+            ]
+        }
+    },
+    "/api/backend/v1/mall/goods/list":{
+        code: 0,
+        data: {
+            total_num:"123",
+            total_page:"13",
+            page:"3",
+            items:[
+                {
+                    "pk":"1",
+                    "gid":"123",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    count:"1",
+                    "state":1,
+                },
+                {
+                    "pk":"2",
+                    "gid":"124",
+                    "name":"商品名111",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    count:"2",
+                    "state":0,
+                },
+                {
+                    "pk":"3",
+                    "gid":"编号333",
+                    "name":"商品名333",
+                    "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+                    "price":123,
+                    count:"3",
+                    "state":1,
+                }
+            ]
+        }
+    },
+
+
+    "/api/backend/v1/mall/cat/list":{
+        code: 0,
+        data: [
+            {
+                pk: 1,
+                name: "保健",
+                "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+            },
+            {
+                pk: 2,
+                name: "食品",
+                "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+            },
+            {
+                pk: 3,
+                name: "器物",
+                "thumbnail":"http://cdn.iciba.com/news/word/20181225.jpg",
+            }
+        ]
     }
+
 }

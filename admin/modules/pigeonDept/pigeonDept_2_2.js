@@ -1,7 +1,7 @@
 define(function (require) {
     var app = require('../../js/app').app;
 
-    app.controller('pigeonDept_2_4', ['$scope', function ($scope) {
+    app.controller('pigeonDept_2_2', ['$scope', function ($scope) {
 
         global.on_load_func($scope);
 
@@ -15,7 +15,6 @@ define(function (require) {
 
         // 当前页面默认值
         var datas = {
-            cur_cat: -1,  // 默认横幅编辑
             opt: {
                 state: "100",  // 默认全部
             },
@@ -23,39 +22,11 @@ define(function (require) {
         };
         $scope.datas = { ...settings.default_datas, ...datas };
 
-        $scope.ajax_get_cat_list = function () {
-            var param = {
-                _method: 'get',
-                _url: settings.ajax_func.mallCatList,
-                _param: {}
-            };
-            return global.return_promise($scope, param);
-        }
-        $scope.get_cat_list = function () {
-            $scope.ajax_get_cat_list()
-                .then($scope.get_cat_list_callback)
-                .catch($scope.ajax_catch);
-        };
-        $scope.get_cat_list_callback = function (data) {
-            $scope.$apply(function () {
-                $scope.datas.cat_list = data.data;
-                $scope.get_cat_datas();
-            });
-        }
-        
-        $scope.change_cat = function (pk) {
-            $scope.datas.cur_cat = pk;
-            if(pk > 0) {
-                $scope.get_cat_datas();
-            } else {
-                $scope.get_banner_datas();
-            }
-        }
 
-        $scope.ajax_get_cat_datas = function() {
+        $scope.ajax_data = function() {
             var param = {
                 _method: 'get',
-                _url: settings.ajax_func.mallStaticPigeonList,
+                _url: settings.ajax_func.mallAuctionList,
                 _param: {
                     page: $scope.datas.cur_page,
                     state: $scope.datas.opt.state,
@@ -63,14 +34,7 @@ define(function (require) {
             };
             return global.return_promise($scope, param);
         }
-        $scope.get_cat_datas = function () {
-            if($scope.datas.cur_cat> 0 ){
-                $scope.ajax_get_cat_datas()
-                    .then(get_cat_datas_callback)
-                    .catch($scope.ajax_catch);
-            };
-        }
-        $scope.get_cat_datas_callback = function(data){
+        $scope.get_datas_callback = function(data){
             var total_page = data.data.total_page;
             $scope.$apply(function(){
                 $scope.ajax_loading = false;
@@ -87,10 +51,10 @@ define(function (require) {
             $scope.datas.selected_item = {
                 pk: 0,
                 thumbnail: "",
+                posters:[],
                 sex: 0,
             };
-            $('#pigeonChange').modal('show');
-            $scope.auction_pigeon_list($scope, $scope.datas.selected_item);
+            $('#goodDetail').modal('show');
         }
 
         // 修改状态
@@ -199,10 +163,10 @@ define(function (require) {
                 }
             }
         }
-
+        
         // 查看场次鸽列表
         $scope.ajax_auction_pigeon_list = function ($scope, item) {
-            $scope.datas.selected_item = item;
+            $scope.datas.selected_pigeon = item;
             var param = {
                 _method: 'get',
                 _url: settings.ajax_func.mallAuctionPigeonList,
@@ -220,10 +184,19 @@ define(function (require) {
         $scope.auction_pigeon_list_callback = function(data) {
             $scope.$apply(function () {
                 $scope.datas.selected_item_pigeon = data.data;
-                //$('#pigeonList').modal('show');
+                $('#pigeonList').modal('show');
             });
         }
 
+        // 添加场次鸽子
+        $scope.pigeon_create = function ($scope) {
+            $scope.datas.selected_pigeon = {
+                pk: 0,
+            };;
+            $scope.datas.selected_item_pigeon_gid = typeof pigeon == "object" ? pigeon.gid : 0;
+            $('#pigeonChange').modal('show');
+            $scope.get_pigeon_list($scope);
+        }
         // 添加场次鸽子
         $scope.pigeon_add = function ($scope, pigeon) {
             $scope.datas.selected_pigeon = pigeon;
@@ -239,7 +212,7 @@ define(function (require) {
         $scope.ajax_pigeon_list = function ($scope) {
             var param = {
                 _method: 'get',
-                _url: settings.ajax_func.mallGoodsList,
+                _url: settings.ajax_func.mallPigeons,
                 _param: {
                     query: $scope.datas.opt.query,
                 }
@@ -248,15 +221,16 @@ define(function (require) {
         }
         $scope.ajax_pigeon_list_callback = function (data) {
             $scope.$apply(function(){
-                $scope.datas.pigeon_list = data.data.items;
+                $scope.datas.pigeon_list = data.data;
             });
         }
 
         $scope.ajax_pigeon_change = function ($scope, operate) {
             var param = {
                 _method: 'post',
-                _url: settings.ajax_func.mallSuggestGoods,
+                _url: settings.ajax_func.mallAuctionPigeon,
                 _param: {
+                    pk: $scope.datas.selected_pigeon["pk"],
                     gid: $scope.datas.selected_item_pigeon_gid,
                     operate: operate
                 }
@@ -275,7 +249,7 @@ define(function (require) {
         }
         $scope.pigeon_update_callback = function (data) {
             $('#pigeonChange').modal('hide');
-            $scope.reset_datas($scope);
+            $scope.auction_pigeon_list($scope, $scope.datas.selected_pigeon);
         }
         $scope.pigeon_remove = function ($scope) {
             if($scope.datas.selected_pigeon["pk"] > 0) {
@@ -286,7 +260,7 @@ define(function (require) {
         }
 
         ////// 执行函数
-        $scope.get_cat_list($scope);
+        $scope.get_datas($scope);
 
     }])
 });

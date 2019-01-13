@@ -117,19 +117,19 @@ define(function (require) {
         }
 
         // 删除单个商品
-        // $scope.ajax_remove_data = function(pk) {
-        //     var param = {
-        //         _method: 'delete',
-        //         _url: settings.ajax_func.mallPigeon,
-        //         _param: {
-        //             pk: pk,
-        //         }
-        //     };
-        //     return global.return_promise($scope, param);
-        // }
-        // $scope.item_remove_callback = function (data) {
-        //     $scope.reset_datas($scope);
-        // }
+        $scope.ajax_remove_data = function(pk) {
+            var param = {
+                _method: 'delete',
+                _url: settings.ajax_func.mallPigeon,
+                _param: {
+                    pk: pk,
+                }
+            };
+            return global.return_promise($scope, param);
+        }
+        $scope.item_remove_callback = function (data) {
+            $scope.reset_datas($scope);
+        }
 
         // 上传文件
         $scope.add_files = function (tp) {

@@ -5,13 +5,27 @@
     <div class="mainbody pigeonDept_2_4">
 
 
+        <div class="row tabSection">
+            <div class="pull-left">
+                <span  ng-class="datas.cur_cat == -1 ? 'text-on': '' "
+                       ng-click="change_cat(-1);">横幅设置</span>
+                <span ng-repeat="c in datas.cat_list" ng-class="datas.cur_cat == c.pk ? 'text-on': '' "
+                      ng-click="change_cat(c.pk);"
+                      ng-bind="c.name"></span>
+            </div>
+            <div class="pull-right">
+                <input class="btn btn-primary" type="button" value="编辑入口" >
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary">创建新场拍卖</button>
+            <button type="button" class="btn btn-primary" ng-click="item_create();">上架新物品</button>
 
             <div class="btn-group pull-right" role="group" aria-label="...">
-                <button type="button" class="btn --primary">全部</button>
-                <button type="button" class="btn ">拍卖中</button>
-                <button type="button" class="btn ">已结束</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">上架中</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_datas(this, 1);">已下架</button>
             </div>
         </div>
 
@@ -19,55 +33,42 @@
         <div id="is_loading" ng-show="is_loading" class="iLoading_loading_pic"></div>
         <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
             <thead>
-                <tr>
-                    <th>场次配图</th>
-                    <th>场次描述</th>
-                    <th>鸽数量</th>
-                    <th>截止日期</th>
-                    <th>场次编号</th>
-                    <th>当前状态</th>
-                    <th>快速操作</th>
-                </tr>
+            <tr>
+                <th>商品图</th>
+                <th>商品名</th>
+                <th>价格</th>
+                <th>排序</th>
+                <th>商品编号</th>
+                <th>库存数量</th>
+                <th>当前状态</th>
+                <th>快速操作</th>
+            </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><img class="imgsmall" src="http://cdn.iciba.com/news/word/20181225.jpg"></td>
-                    <td>鸽用流感疫苗，适合6-12个月鸽，从国外一手进口的最好疫苗，独家出售</td>
-                    <td>12</td>
-                    <td>2018年12月20日 12:00</td>
-                    <td>AU4</td>
-                    <td><span class="dot-text dot-primary">拍卖中</span></td>
-                    <td>
-                        <div class="dropdown">
+            <tr ng-if="!ajax_loading && datas.dataList.length <= 0">
+                <td colspan="7">没有数据</td>
+            </tr>
+            <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.cover != ''" ng-src="{{d.thumbnail}}"></td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.price">--</td>
+                <td ng-bind="d.sn">--</td>
+                <td ng-bind="d.gid">--</td>
+                <td ng-bind="d.count">--</td>
+                <td><span class="dot-text" ng-bind="datas.suggestGoodsStates[d.state][0]" ng-class="datas.suggestGoodsStates[d.state][1]">--</span></td>
+                <td>
+                    <div class="dropdown">
                             <span class="icons glyphicon glyphicon-option-horizontal"
-                                  id="dropdownMenu_1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu_1">
-                                <li><a class="default" href="#1"><span class="glyphicon glyphicon-pencil"></span>基本信息</a></li>
-                                <li><a class="default" href="#2"><span class="glyphicon glyphicon-plus"></span>额外信息</a></li>
-                                <li><a href="#3"><span class="glyphicon glyphicon-yen"></span>资产详情</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><img class="imgsmall" src="http://cdn.iciba.com/news/word/20181225.jpg"></td>
-                    <td>鸽用流感疫苗，适合6-12个月鸽，从国外一手进口的最好疫苗，独家出售</td>
-                    <td>12</td>
-                    <td>2018年12月20日 12:00</td>
-                    <td>AU4</td>
-                    <td><span class="dot-text dot-primary">拍卖中</span></td>
-                    <td>
-                        <div class="dropdown">
-                            <span class="icons glyphicon glyphicon-option-horizontal"
-                                  id="dropdownMenu_1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu_1">
-                                <li><a class="default" href="#1"><span class="glyphicon glyphicon-pencil"></span>基本信息</a></li>
-                                <li><a class="default" href="#2"><span class="glyphicon glyphicon-plus"></span>额外信息</a></li>
-                                <li><a href="#3"><span class="glyphicon glyphicon-yen"></span>资产详情</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li ng-if="d.state!=0"><a class="default" ng-click="item_ch_state(this, d.pk, 1);">上架</a></li>
+                            <li ng-if="d.state!=1"><a class="default" ng-click="item_ch_state(this, d.pk, 0);">下架</a></li>
+                            <li><a class="default" ng-click="pigeon_add(this, d);">编辑信息</a></li>
+                            <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
         <div class="clearfix"></div>
@@ -80,7 +81,53 @@
         </p>
         <div class="clearfix"></div>
 
+        <!-- 编辑场次鸽信息 -->
+        <div class="modal fade" id="pigeonChange" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>上架/编辑新物品</em>
+                            <input disabled class="form-control" ng-model="datas.selected_item.pk">
+                            <div class="input-group pull-right">
+                                <input type="text" class="form-control" ng-model="datas.query" placeholder="输入商品编号或商品名搜索">
+                                <div class="input-group-addon" ng-click="get_pigeon_list(this);">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </div>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <table class="table table-noborder table-condensed" ng-show="!ajax_loading && datas.pigeon_list.length > 0">
+                            <tbody>
+                            <tr ng-if="!ajax_loading && datas.pigeon_list.length <= 0">
+                                <td colspan="7">没有数据</td>
+                            </tr>
+                            <tr ng-if="!ajax_loading && datas.pigeon_list.length > 0"
+                                ng-repeat="p in datas.pigeon_list">
+                                <td><input type="radio" name="pigeon" ng-model="datas.selected_item_pigeon_gid"
+                                           ng-value="p.gid"
+                                           ng-checked="p.gid == datas.selected_pigeon.gid ?'checked': ''"></td>
+                                <td ng-bind="p.gid">--</td>
+                                <td ng-bind="p.name">--</td>
+                                <td width="50"><img ng-show="p.thumbnail!=''" ng-src="{{p.thumbnail}}" class="imgsmall"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-default" ng-click="pigeon_remove(this);">删除</button>
+                        <button type="button" class="btn btn-primary" ng-click="pigeon_update(this);">确定修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <debug-info></debug-info>
+
 </div>
 
 

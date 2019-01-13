@@ -2,66 +2,64 @@
 
     <top-menus></top-menus>
 
-    <div class="mainbody pigeonDept_2_3">
+    <div class="mainbody pigeonDept_2_2">
 
 
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary" ng-click="item_create();">上架新物品</button>
+            <button type="button" class="btn btn-primary" ng-click="pigeon_create(this);">添加定价鸽</button>
 
             <div class="btn-group pull-right" role="group" aria-label="...">
                 <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
                 <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">上架中</button>
-                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_datas(this, 1);">已下架</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="reset_datas(this, 1);">拍出</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_datas(this, 2);">已下架</button>
             </div>
         </div>
 
-
-        <div id="is_loading" ng-show="is_loading" class="iLoading_loading_pic"></div>
-        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!ajax_loading && datas.dataList.length > 0">
             <thead>
                 <tr>
                     <th>商品图</th>
                     <th>商品名</th>
-                    <th>价格</th>
+                    <th>起拍价</th>
+                    <th>环号</th>
                     <th>排序</th>
-                    <th>商品编号</th>
-                    <th>库存数量</th>
                     <th>当前状态</th>
                     <th>快速操作</th>
                 </tr>
             </thead>
             <tbody>
-            <tr ng-if="!ajax_loading && datas.dataList.length <= 0">
-                <td colspan="7">没有数据</td>
-            </tr>
-            <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
-                <td><img class="imgsmall" ng-show="d.cover != ''" ng-src="{{d.thumbnail}}"></td>
-                <td ng-bind="d.name">--</td>
-                <td ng-bind="d.price">--</td>
-                <td ng-bind="d.sn">--</td>
-                <td ng-bind="d.gid">--</td>
-                <td ng-bind="d.count">--</td>
-                <td><span class="dot-text" ng-bind="datas.suggestGoodsStates[d.state][0]" ng-class="datas.suggestGoodsStates[d.state][1]">--</span></td>
-                <td>
-                    <div class="dropdown">
+                <tr ng-if="!ajax_loading && datas.dataList.length <= 0">
+                    <td colspan="7">没有数据</td>
+                </tr>
+                <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                    <td><img class="imgsmall" ng-show="d.cover != ''" ng-src="{{d.thumbnail}}"></td>
+                    <td ng-bind="d.name">--</td>
+                    <td ng-bind="d.price">--</td>
+                    <td ng-bind="d.gid">--</td>
+                    <td ng-bind="d.sn">--</td>
+                    <td><span class="dot-text" ng-bind="datas.staticStates[d.state][0]" ng-class="datas.staticStates[d.state][1]">--</span></td>
+                    <td>
+                        <div class="dropdown">
                             <span class="icons glyphicon glyphicon-option-horizontal"
                                   id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
-                            <li ng-if="d.state!=0"><a class="default" ng-click="item_ch_state(this, d.pk, 1);">上架</a></li>
-                            <li ng-if="d.state!=1"><a class="default" ng-click="item_ch_state(this, d.pk, 0);">下架</a></li>
-                            <li><a class="default" ng-click="pigeon_add(this, d);">编辑信息</a></li>
-                            <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
-                        </ul>
-                    </div>
-                </td>
-            </tr>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                                <li ng-if="d.state!=0 && d.state!=1"><a class="default" ng-click="item_ch_state(this, d.pk, 1);">上架</a></li>
+                                <li ng-if="d.state!=2 && d.state!=1"><a class="default" ng-click="item_ch_state(this, d.pk, 0);">下架</a></li>
+                                <li><a class="default" ng-click="pigeon_add(this, d);">编辑信息</a></li>
+                                <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <div class="clearfix"></div>
 
-        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+        <page-nav ng-show="!ajax_loading && datas.dataList.length > 0"></page-nav>
 
-        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+        <p id="data_no_item" ng-show="!ajax_loading && datas.dataList.length <= 0" class="nodatas">
             <span class="icons info_icon"></span>
             没有数据
         </p>
@@ -73,10 +71,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title form-inline">
-                            <em>上架/编辑新物品</em>
+                            <em>编辑场次信息</em>
                             <input disabled class="form-control" ng-model="datas.selected_item.pk">
                             <div class="input-group pull-right">
-                                <input type="text" class="form-control" ng-model="datas.query" placeholder="输入商品编号或商品名搜索">
+                                <input type="text" class="form-control" ng-model="datas.query">
                                 <div class="input-group-addon" ng-click="get_pigeon_list(this);">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </div>
