@@ -159,37 +159,43 @@ define(function (require) {
             })
 
             ////////// 库存管理
-            .state('stock_1', {
-                url: '/stock_1',
-                templateUrl: './modules/stock/stock_1.html?v='+version,
-                controllerUrl: './modules/stock/stock_1',
-                controller: 'stock_1'
+            .state('stock_1_1', {  // 信鸽档案
+                url: '/stock_1_1',
+                templateUrl: './modules/stock/stock_1_1.html?v='+version,
+                controllerUrl: './modules/stock/stock_1_1',
+                controller: 'stock_1_1'
             })
-            .state('stock_2', {
-                url: '/stock_2',
-                templateUrl: './modules/stock/stock_2.html?v='+version,
-                controllerUrl: './modules/stock/stock_2',
-                controller: 'stock_2'
+            .state('stock_1_2', {  // 配对孵化
+                url: '/stock_1_2',
+                templateUrl: './modules/stock/stock_1_2.html?v='+version,
+                controllerUrl: './modules/stock/stock_1_2',
+                controller: 'stock_1_2'
+            })
+            .state('stock_2_1', {  // 物品管理
+                url: '/stock_2_1',
+                templateUrl: './modules/stock/stock_2_1.html?v='+version,
+                controllerUrl: './modules/stock/stock_2_1',
+                controller: 'stock_2_1'
             })
 
             ////////// 财务审核
-            .state('financeAudit_1', {
-                url: '/financeAudit_1',
-                templateUrl: './modules/financeAudit/financeAudit_1.html?v='+version,
-                controllerUrl: './modules/financeAudit/financeAudit_1',
-                controller: 'financeAudit_1'
+            .state('financeAudit_1_1', {
+                url: '/financeAudit_1_1',
+                templateUrl: './modules/financeAudit/financeAudit_1_1.html?v='+version,
+                controllerUrl: './modules/financeAudit/financeAudit_1_1',
+                controller: 'financeAudit_1_1'
             })
-            .state('financeAudit_2', {
-                url: '/financeAudit_2',
-                templateUrl: './modules/financeAudit/financeAudit_2.html?v='+version,
-                controllerUrl: './modules/financeAudit/financeAudit_2',
-                controller: 'financeAudit_2'
+            .state('financeAudit_1_2', {
+                url: '/financeAudit_1_2',
+                templateUrl: './modules/financeAudit/financeAudit_1_2.html?v='+version,
+                controllerUrl: './modules/financeAudit/financeAudit_1_2',
+                controller: 'financeAudit_1_2'
             })
-            .state('financeAudit_3', {
-                url: '/financeAudit_3',
-                templateUrl: './modules/financeAudit/financeAudit_3.html?v='+version,
-                controllerUrl: './modules/financeAudit/financeAudit_3',
-                controller: 'financeAudit_3'
+            .state('financeAudit_1_3', {
+                url: '/financeAudit_1_3',
+                templateUrl: './modules/financeAudit/financeAudit_1_3.html?v='+version,
+                controllerUrl: './modules/financeAudit/financeAudit_1_3',
+                controller: 'financeAudit_1_3'
             })
 
             ////////// 权限管理

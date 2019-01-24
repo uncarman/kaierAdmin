@@ -1,0 +1,310 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody stock_2_1">
+
+        <div class="form-inline body-header form-withmargin">
+            <button type="button" class="btn btn-primary" ng-click="item_create();">物品入库</button>
+
+            <div class="form-group pull-right" style="margin-left: 30px;">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入库存号或物品名">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_data();"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>库存编号</th>
+                <th>物品名</th>
+                <th>库存数</th>
+                <th>库存位置</th>
+                <th>重量(KG)</th>
+                <th>容量(ML)</th>
+                <th>平均单价(元)</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="8">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.count">--</td>
+                <td ng-bind="d.location">--</td>
+                <td><span ng-bind="d.weight"></span></td>
+                <td ng-bind="d.capacity">--</td>
+                <td ng-bind="d.price">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_view(this, d);">查看</a></li>
+                            <li><a class="default" ng-click="item_in_stock(this, d);">入库</a></li>
+                            <li><a class="default" ng-click="item_remove(this, d);">删除</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+
+        <!-- 创建库存 -->
+        <div class="modal fade" id="goodCreate" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>创建新库存</em>
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">物品名</label>
+                                <div class="col-sm-5">
+                                    <input type="text" ng-model="datas.selected_item.name" class="form-control" placeholder="填入物品名称">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">库存数量</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.count" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">采购价</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.price" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">重量</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.weight" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">库存位置</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.location" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">物品图</label>
+                                <div class="col-sm-5">
+                                    <span class="upload-file" ng-show="datas.selected_item.thumbnail != ''">
+                                        <span class="icons icon-remove" ng-click="remove_thumbnail();"></span>
+                                        <img class="upload-file"
+                                             ng-src="{{datas.selected_item.thumbnail}}">
+                                    </span>
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <div ng-click="add_files('thumbnail');" class="upload-file"
+                                         ng-show="!(datas.selected_item.thumbnail != '')">+</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" ng-click="item_update(this);">确定创建</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 查看库存 -->
+        <div class="modal model-rt fade" id="goodDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>物品信息</em>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>物品信息</b>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        物品名
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.name" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        重量
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.weight" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        采购均价
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.price" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存量
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.count" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        容量
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.capacity" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存号
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.sid" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存位置
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <span ng-bind="datas.selected_item.location" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        物品图
+                                    </div>
+                                    <div class="col-sm-10  row-content">
+                                        <img class="imgsmall" src="http://cdn.iciba.com/news/word/20181225.jpg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>购买记录</b>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <table class="table table-hover" ng-show="!is_loading">
+                                    <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>订单号</td>
+                                        <td>购买日期</td>
+                                        <td>购买价(元)</td>
+                                        <td>数量</td>
+                                        <td>购买人</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-if="!is_loading && datas.selected_item_record.length <= 0">
+                                        <td></td>
+                                        <td colspan="5">没有数据</td>
+                                    </tr>
+                                    <tr ng-repeat="d in datas.selected_item_record">
+                                        <td></td>
+                                        <td ng-bind="d.oid">--</td>
+                                        <td ng-bind="d.date">--</td>
+                                        <td ng-bind="d.price">--</td>
+                                        <td ng-bind="d.count">--</td>
+                                        <td ng-bind="d.phone">--</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 入库 -->
+        <div class="modal fade" id="stockIn" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>物品入库</em>
+                            <input type="hidden" ng-model="datas.selected_item.sid" class="form-control">
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">物品名</label>
+                                <div class="col-sm-5">
+                                    <input type="text" disabled ng-model="datas.selected_item.name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">入库库数量</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.count" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">入库价</label>
+                                <div class="col-sm-5">
+                                    <input type="number" ng-model="datas.selected_item.price" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" ng-click="item_in_stock_submit(this);">确定创建</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

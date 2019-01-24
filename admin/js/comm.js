@@ -39,6 +39,25 @@ define(function (require, exports, module) {
                 0: "雄",
                 1: "雌"
             },
+            pigeonKinds: {
+                0: "保姆鸽",
+                1: "外籍鸽",
+                2: "钟鸽",
+                3: "销售鸽",
+                100: "全部",
+            },
+            pigeonFeathers: ["红", "白", "黑", "灰"],
+            pigeonStars: [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5],
+            pigeonLocationState: {
+                0: "在库",
+                1: "外出",
+                2: "已售",
+                3: "死亡",
+            },
+            pigeonSterileState: {
+                0: "否",
+                1: "是",
+            },
 
 
             auctionStatesStates: {
@@ -67,7 +86,35 @@ define(function (require, exports, module) {
             catGoodsStates: {
                 0: ["上架中", "dot-primary"],
                 1: ["已下架", "dot-danger"],
+            },
+
+            bannerKinds: [ 'pigeon', 'bidding', 'goods', 'web'],
+
+
+            financeStates: {
+                0: ["待审核", "dot-text dot-primary"],
+                1: ["凭证无效", "dot-text dot-danger"],
+                1: ["已确认", ""],
+                10: ["已处理", ""],
+            },
+
+            financeGiveStates: {
+                0: ["待处理", "dot-text dot-primary"],
+                1: ["已完成", "dot-text dot-default"],
+            },
+
+
+            accountKinds : {
+                0: "保证金账户",
+                1: "拍卖账户",
+                2: "工棚账户",
+                3: "俱乐部账户",
+            },
+            accountStatus: {
+                0: ["启用中", "dot-primary"],
+                1: ["已停用", "dot-danger"],
             }
+
         },
         default_page : "dashboard",
 
@@ -124,9 +171,41 @@ define(function (require, exports, module) {
             // pigeonDept_2_4
             "mallCatList": "/api/backend/v1/mall/cat/list", // Mall - 商城-分类列表
             "mallCatGoodsList": "/api/backend/v1/mall/cat/goods/list",  // Mall - 商城-分类商品
+            "mallCat": "/api/backend/v1/mall/cat", // Mall - 商城-分类编辑
             "mallCatGoods": "/api/backend/v1/mall/cat/goods",  // Mall - 商城-分类商品编辑
+            "mallCatState": "/api/backend/v1/mall/cat/state", // Mall - 商城-分类状态修改
+            "mallBannerList": "/api/backend/v1/mall/banner/list", // Mall - 商城-横幅列表
+            "mailBanner": "/api/backend/v1/mall/banner", // Mall - 商城-横幅编辑
+            "mailBannerDel": "/api/backend/v1/mall/banner/del", // Mall - 商城-横幅删除
 
 
+            // stock_1_1
+            "storePigeonList": "/api/backend/v1/store/pigeon/list",  // Store - 库存鸽-库存鸽列表
+            "storePigeon": "/api/backend/v1/store/pigeon", // Store - 库存鸽-鸽子档案
+            "storeBloodList": "/api/backend/v1/store/blood/list",  // Store - 库存鸽-血统列表
+            "storeBlood": "?????",  // Store - 库存鸽-添加血统
+
+
+            // stock_2_1
+            "storeGoodsList": "/api/backend/v1/store/goods/list", // Store - 库存物品-库存物品列表
+            "storeGoodsDel": "/api/backend/v1/store/goods/del", // Store - 库存物品-库存物品删除
+            "storeGoods": "/api/backend/v1/store/goods", // Store - 库存物品-库存物品创建
+            "storeGoodsRecord": "/api/backend/v1/store/goods/record", // Store - 库存物品-库存物品购买记录
+            "storeGoodsUpdate": "/api/backend/v1/store/goods/update", // Store - 库存物品-库存物品更新
+
+            // financeAudit_1_1
+            "financeReceiveList": "/api/backend/v1/finance/receive/list", // Finance - 财务-收款列表
+            "financeReceiveState": "/api/backend/v1/finance/receive/state", // Finance - 财务-收款记录状态修改
+
+            // financeAudit_1_2
+            "financeGiveList": "/api/backend/v1/finance/give/list", // Finance - 财务-收款列表
+            "financeGiveInfo": "/api/backend/v1/finance/give/info", // Finance - 财务-收款详细
+            "financeGiveState": "/api/backend/v1/finance/give/state", // Finance - 财务-收款记录状态修改
+
+            // financeAudit_1_3
+            "financeAccountList": "/api/backend/v1/finance/account/list", // Finance - 财务-账户列表
+            "financeAccountState": "/api/backend/v1/finance/account/state", // Finance - 财务-账户状态修改
+            "financeAccount": "/api/backend/v1/finance/account", // Finance - 财务-账户编辑
         },
 
         // 分页参数
@@ -244,13 +323,35 @@ define(function (require, exports, module) {
                 "children": [
                     {
                         "page": "stock_1",
+                        "link": "stock_1_1",
                         "name": "鸽舍管理",
-                        "link": "stock_1",
+                        "icon": "imgs/default_header_icon.png",
+                        "children": [
+                            {
+                                "page": "stock_1_1",
+                                "name": "信鸽档案",
+                                "link": "stock_1_1",
+                            },
+                            {
+                                "page": "stock_1_2",
+                                "name": "配对孵化",
+                                "icon": "",
+                                "link": "stock_1_2",
+                            }
+                        ],
                     },
                     {
                         "page": "stock_2",
                         "name": "物品管理",
-                        "link": "stock_2",
+                        "link": "stock_2_1",
+                        "icon": "imgs/default_header_icon.png",
+                        "children": [
+                            {
+                                "page": "stock_2_1",
+                                "name": "物品管理",
+                                "link": "stock_2_1",
+                            }
+                        ]
                     }
                 ]
             },
@@ -263,18 +364,26 @@ define(function (require, exports, module) {
                 "children": [
                     {
                         "page": "financeAudit_1",
-                        "name": "收款审核",
-                        "link": "financeAudit_1",
-                    },
-                    {
-                        "page": "financeAudit_2",
-                        "name": "出款审核",
-                        "link": "financeAudit_2",
-                    },
-                    {
-                        "page": "financeAudit_3",
-                        "name": "账号管理",
-                        "link": "financeAudit_3",
+                        "link": "financeAudit_1_1",
+                        "name": "财务审核",
+                        "icon": "imgs/default_header_icon.png",
+                        "children": [
+                            {
+                                "page": "financeAudit_1_1",
+                                "name": "收款审核",
+                                "link": "financeAudit_1_1",
+                            },
+                            {
+                                "page": "financeAudit_1_2",
+                                "name": "出款管理",
+                                "link": "financeAudit_1_2",
+                            },
+                            {
+                                "page": "financeAudit_1_3",
+                                "name": "账号管理",
+                                "link": "financeAudit_1_3",
+                            }
+                        ],
                     }
                 ]
             },
@@ -420,13 +529,14 @@ define(function (require, exports, module) {
             if(settings.is_fake_ajax) {
                 try{
                     setTimeout(function(){
+                        console.log(params);
                         if(fake_data[params._url]) {
-                            console.log(params._url, fake_data[params._url]);
+                            console.log(fake_data[params._url]);
                             return success_func(fake_data[params._url]);
                         } else {
                             return success_func({"code":0, "data": {}});
                         }
-                    }, 1000);
+                    }, 100);
                 } catch(e) {
                     // pass
                 }
@@ -515,14 +625,14 @@ define(function (require, exports, module) {
         get_datas_prev: function  ($scope) {
             var page = Math.max(1,($scope.datas.cur_page-1));
             if(page != $scope.datas.cur_page) {
-                $scope.get_datas(page);
+                $scope.get_datas($scope, page);
             }
         },
 
         get_datas_next : function ($scope) {
             var page = Math.min($scope.datas.pageList.length,($scope.datas.cur_page+1));
             if(page != $scope.datas.pageList.length) {
-                $scope.get_datas(page);
+                $scope.get_datas($scope, page);
             }
         },
 
@@ -1052,7 +1162,6 @@ define(function (require, exports, module) {
             //$scope.ajax_base_upload = global.ajax_base_upload;
             $scope.get_datas_next = global.get_datas_next;
             $scope.get_datas_prev = global.get_datas_prev;
-            $scope.get_datas_next = global.get_datas_next;
             $scope.topMenuClick = global.topMenuClick;
 
             // 前端校验用户登录
@@ -1145,7 +1254,7 @@ define(function (require, exports, module) {
             });
         },
 
-        base_add_files: function ($scope, fileId, type) {
+        base_add_files: function ($scope, fileId, type, callback) {
             $("#"+fileId).off("change").on("change", function () {
                 var fileObj = document.getElementById(fileId).files[0]; // js 获取文件对象
                 console.log(fileObj);
@@ -1165,8 +1274,15 @@ define(function (require, exports, module) {
                 }
                 $scope.datas.upload_file_type = type;
                 $scope.datas.upload_file_file_kind = file_kind;
+                var callback_func = $scope.add_file_callback;
+                if(typeof callback == "function") {
+                    callback_func = callback;
+                }
                 global.ajax_base_upload($scope, formFile)
-                    .then($scope.add_file_callback)
+                    .then(callback_func)
+                    .then(function () {
+                        $("#"+fileId).val("");
+                    })
                     .catch($scope.ajax_catch);
             }).click();
         },

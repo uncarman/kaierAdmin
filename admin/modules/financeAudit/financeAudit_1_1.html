@@ -1,0 +1,77 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody financeAudit_1_1">
+
+
+        <div class="form-inline body-header form-withmargin">
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入订单号或用户手机号">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
+                </div>
+            </div>
+
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">待审核</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="reset_datas(this, 1);">凭证无效</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_datas(this, 2);">已确认</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 10 ? '--primary' : ''" ng-click="reset_datas(this, 10);">已处理</button>
+            </div>
+        </div>
+
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>审核类型</th>
+                <th>提交时间</th>
+                <th>申请人</th>
+                <th>应收金额</th>
+                <th>凭证照片</th>
+                <th>审核状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="7">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td ng-bind="d.kind">--</td>
+                <td ng-bind="d.date">--</td>
+                <td ng-bind="d.creater">--</td>
+                <td ng-bind="d.pay_money">--</td>
+                <td><img class="imgsmall" ng-repeat="p in d.pics" ng-src="{{p.url}}"></td>
+                <td ng-bind="datas.financeStates[d.state][0]" ng-class="datas.financeStates[d.state][1]">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="finance_confirm(this, d, 1);">打回</a></li>
+                            <li><a class="default" ng-click="finance_confirm(this, d, 2);">确认收款</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

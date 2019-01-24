@@ -1,0 +1,186 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody financeAudit_1_2">
+
+
+        <div class="form-inline body-header form-withmargin">
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入订单号或用户手机号">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
+                </div>
+            </div>
+
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">待处理</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="reset_datas(this, 1);">已完成</button>
+            </div>
+        </div>
+
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>出款说明</th>
+                <th>提交时间</th>
+                <th>汇出对象</th>
+                <th>申请金额</th>
+                <th>实际金额</th>
+                <th>汇款申请人</th>
+                <th>当前状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="7">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td ng-bind="d.kind">--</td>
+                <td ng-bind="d.date">--</td>
+                <td ng-bind="d.receiver">--</td>
+                <td ng-bind="d.apply_money">--</td>
+                <td ng-bind="d.pay_money">--</td>
+                <td ng-bind="d.creater">--</td>
+                <td ng-bind="datas.financeGiveStates[d.state][0]" ng-class="datas.financeGiveStates[d.state][1]">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_view(this, d);">查看</a></li>
+                            <li><a class="default" ng-click="finance_confirm(this, d, 1);">收款完成</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+
+        <!--商品详情-->
+        <div class="modal model-rt" id="itemDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>出款审核</em>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="finance_confirm(this, datas.selected_item, 1);">汇款完成</button>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>申请信息</b>
+                                    <input class="form-control w30" type="hidden" ng-show="!is_view(this)" ng-model="datas.selected_item.pk">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        出款说明:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.kind" ng-show="is_view(this)"></span>
+                                        <input class="form-control w80" ng-show="!is_view(this)" ng-model="datas.selected_item.kind">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        申请日期:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.date" ng-show="is_view(this)"></span>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        申请人:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.creater" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        申请金额:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.apply_money" ng-show="is_view(this)"></span>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        手续费:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="(datas.selected_item.apply_money - datas.selected_item.pay_money)" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        实际应出:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.pay_money" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-12 section-title">
+                                        <b>收款信息</b>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        户主:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.receiver" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        开户行:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.bankname" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        开户行:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.bankno" ng-show="is_view(this)"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

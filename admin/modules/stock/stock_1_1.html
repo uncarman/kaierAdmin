@@ -1,0 +1,335 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody stock_1_1">
+
+
+        <div class="form-inline body-header form-withmargin">
+            <button type="button" class="btn btn-primary" ng-click="item_create(this);">新鸽入库</button>
+
+            <div class="form-group pull-right" style="margin-left: 30px;">
+                共<span ng-bind="datas.totalDataNum"></span>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入环号或鸽名">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="btn-group pull-right" role="group" aria-label="...">-->
+                <!--<button type="button" class="btn" ng-class="datas.opt.state == 100 ? '&#45;&#45;primary' : ''" ng-click="reset_datas(this, 100);">全部</button>-->
+                <!--<button type="button" class="btn" ng-class="datas.opt.state == 0 ? '&#45;&#45;primary' : ''" ng-click="reset_datas(this, 0);">编辑中</button>-->
+                <!--<button type="button" class="btn" ng-class="datas.opt.state == 1 ? '&#45;&#45;primary' : ''" ng-click="reset_datas(this, 1);">上架中</button>-->
+                <!--<button type="button" class="btn" ng-class="datas.opt.state == 2 ? '&#45;&#45;primary' : ''" ng-click="reset_datas(this, 2);">已下架</button>-->
+            <!--</div>-->
+        </div>
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>鸽照</th>
+                <th>鸽名</th>
+                <th>血统</th>
+                <th>性别</th>
+                <th>星级</th>
+                <th>环号</th>
+                <th>鸽子品类</th>
+                <th>入库时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="8">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.blood">--</td>
+                <td ng-bind="datas.pigeonSexs[d.sex]">--</td>
+                <td><span class="icons icon-star"></span><span ng-bind="d.star"></span></td>
+                <td ng-bind="d.gid">--</td>
+                <td ng-bind="datas.pigeonKinds[d.kind]">--</td>
+                <td ng-bind="d.ctime">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_view(this, d.pk);">查看</a></li>
+                            <li><a class="default" ng-click="item_edit(this, d.pk);">编辑</a></li>
+                            <li><a class="default" ng-click="item_remove(this, d);">删除</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+        <!--商品详情-->
+        <div class="modal model-rt" id="itemDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em><span ng-if="datas.item_view == 'edit'">编辑</span>鸽信息</em>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="item_edit(this);">编辑信息</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view(this)" ng-click="item_update(this);">确认入库</button>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>身份信息</b>
+                                    <input class="form-control w30" type="hidden" ng-show="!is_view(this)" ng-model="datas.selected_item.pk">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        鸽名:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.name" ng-show="is_view(this)"></span>
+
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.name">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        血统:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.blood" ng-show="is_view(this)"></span>
+                                        <input class="form-control" type="text" ng-show="!is_view(this)" ng-model="datas.selected_item.blood">
+                                        <!--<select class="form-control" ng-show="!is_view(this)">-->
+                                            <!--<option value="">添加血统</option>-->
+                                            <!--<option value="{{t}}"-->
+                                                    <!--ng-repeat="t in datas.bloodList"-->
+                                                    <!--ng-bind="t"-->
+                                                    <!--ng-selected="datas.selected_item.blood==t"></option>-->
+                                        <!--</select>-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        鸽足环号:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.gid" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.gid">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        品类:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.kind" ng-show="is_view(this)"></span>
+                                        <input class="form-control" type="text" ng-show="!is_view(this)" ng-model="datas.selected_item.kind">
+                                        <!--<select class="form-control" ng-show="!is_view(this)">-->
+                                            <!--<option value="{{t}}"-->
+                                                    <!--ng-repeat="t in datas.pigeonKinds"-->
+                                                    <!--ng-bind="t"-->
+                                                    <!--ng-selected="datas.selected_item.kind==t"></option>-->
+                                        <!--</select>-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        性别:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.pigeonSexs[datas.selected_item.sex]" ng-show="is_view(this)"></span>
+                                        <select class="form-control" ng-show="!is_view(this)">
+                                            <option value="{{t}}"
+                                                    ng-repeat="t in datas.pigeonSexs"
+                                                    ng-bind="t"
+                                                    ng-selected="datas.selected_item.sex==t"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        识别环:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.gname" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.gname">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        羽色:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.feather" ng-show="is_view(this)"></span>
+                                        <input class="form-control" type="text"  ng-show="!is_view(this)" ng-model="datas.selected_item.feather">
+                                        <!--<select class="form-control" ng-show="!is_view(this)">-->
+                                            <!--<option value="{{t}}"-->
+                                                    <!--ng-repeat="t in datas.pigeonFeathers"-->
+                                                    <!--ng-bind="t"-->
+                                                    <!--ng-selected="datas.selected_item.feather==t"></option>-->
+                                        <!--</select>-->
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        星级:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.star" ng-show="is_view(this)"></span>
+                                        <select class="form-control" ng-show="!is_view(this)">
+                                            <option value="{{t}}"
+                                                    ng-repeat="t in datas.pigeonStars"
+                                                    ng-bind="t"
+                                                    ng-selected="datas.selected_item.star==t"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        库存状态:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.pigeonLocationState[datas.selected_item.location_state]" ng-show="is_view(this)"></span>
+                                        <select class="form-control" ng-show="!is_view(this)">
+                                            <option value="{{k}}"
+                                                    ng-repeat="(k,v) in datas.pigeonLocationState"
+                                                    ng-bind="v"
+                                                    ng-selected="datas.selected_item.location_state==k"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        库存位置:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.location" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.location">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        健康状态:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.health" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.health">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        生育状态:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.location" ng-show="is_view(this)"></span>
+                                        <select class="form-control" ng-show="!is_view(this)">
+                                            <option value="{{k}}"
+                                                    ng-repeat="(k,v) in datas.pigeonSterileState"
+                                                    ng-bind="v"
+                                                    ng-selected="datas.selected_item.sterile==k"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        鸽照片:
+                                    </div>
+                                    <span class="upload-file" ng-show="datas.selected_item.thumbnail && datas.selected_item.thumbnail != ''">
+                                        <span ng-show="!is_view(this)" class="icons icon-remove" ng-click="remove_thumbnail();"></span>
+                                        <img class="upload-file"
+                                             ng-src="{{datas.selected_item.thumbnail}}">
+                                    </span>
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <div ng-click="add_files('thumbnail');" class="upload-file"
+                                         ng-show="!(datas.selected_item.thumbnail && datas.selected_item.thumbnail != '')">+</div>
+                                </div>
+                            </div>
+                        </div>
+            <style>
+                .bloodFloat1 { width: 40%; float: left; }
+                .bloodFloat1 input {
+                    display: inline-block; width: 80%; }
+                .bloodFloat2 { width: 50%; float: right; }
+                .bloodFloat3 {  width: 50%;  float: right; margin-top: 10px; }
+                .bloodFloat2 input, .bloodFloat3 input { width: 80%; }
+            </style>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>血统信息</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <div class="bloodFloat1">
+                                        父系:
+                                        <span ng-bind="datas.selected_item.father.blood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.blood">
+                                    </div>
+
+                                    <div class="bloodFloat2">
+                                        <span ng-bind="datas.selected_item.father.fblood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.fblood">
+                                    </div>
+
+                                    <div class="bloodFloat3">
+                                        <span ng-bind="datas.selected_item.father.mblood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.mblood">
+                                    </div>
+                                </div>
+                            </div>
+                            <p>&nbsp;</p>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <div class="bloodFloat1">
+                                        母系:
+                                        <span ng-bind="datas.selected_item.mother.blood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.mother.blood">
+                                    </div>
+
+                                    <div class="bloodFloat2">
+                                        <span ng-bind="datas.selected_item.mother.fblood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.mother.fblood">
+                                    </div>
+
+                                    <div class="bloodFloat3">
+                                        <span ng-bind="datas.selected_item.mother.mblood" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.mother.mblood">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>比赛成绩</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <span ng-bind="datas.selected_item.achievement" ng-show="is_view(this)"></span>
+                                    <textarea class="form-control" ng-show="!is_view(this)" ng-bind="datas.selected_item.achievement"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

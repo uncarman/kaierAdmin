@@ -14,26 +14,36 @@
                       ng-bind="c.name"></span>
             </div>
             <div class="pull-right">
-                <input class="btn btn-primary" type="button" value="编辑入口" >
+                <input class="btn btn-primary btn-sm" ng-click="cat_edit(this);" type="button" value="编辑入口" >
             </div>
         </div>
         <div class="clearfix"></div>
 
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary" ng-click="item_create();">上架新物品</button>
+            <button ng-show="datas.cur_cat < 0" type="button" class="btn btn-primary" ng-click="item_create();">创建新横幅</button>
+            <button ng-show="datas.cur_cat >= 0" type="button" class="btn btn-primary" ng-click="item_create();">上架新物品</button>
 
-            <div class="btn-group pull-right" role="group" aria-label="...">
-                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
-                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">上架中</button>
-                <button type="button" class="btn" ng-class="datas.opt.state == 2 ? '--primary' : ''" ng-click="reset_datas(this, 1);">已下架</button>
+            <div ng-show="datas.cur_cat > 0" class="btn-group pull-right" role="group" aria-label="...">
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="get_cat_datas(this, 100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="get_cat_datas(this, 0);">上架中</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="get_cat_datas(this, 1);">已下架</button>
             </div>
         </div>
 
 
         <div id="is_loading" ng-show="is_loading" class="iLoading_loading_pic"></div>
-        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length >= 0">
             <thead>
-            <tr>
+            <tr ng-if="datas.cur_cat < 0">
+                <th>横幅图</th>
+                <th>横幅描述</th>
+                <th>排序</th>
+                <th>点击量</th>
+                <th>链接类型</th>
+                <th>链接编号</th>
+                <th>快速操作</th>
+            </tr>
+            <tr ng-if="datas.cur_cat > 0">
                 <th>商品图</th>
                 <th>商品名</th>
                 <th>价格</th>
@@ -46,24 +56,41 @@
             </thead>
             <tbody>
             <tr ng-if="!ajax_loading && datas.dataList.length <= 0">
-                <td colspan="7">没有数据</td>
+                <td colspan="6" ng-if="datas.cur_cat < 0">没有数据</td>
+                <td colspan="7" ng-if="datas.cur_cat >= 0">没有数据</td>
             </tr>
-            <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
-                <td><img class="imgsmall" ng-show="d.cover != ''" ng-src="{{d.thumbnail}}"></td>
+            <tr ng-if="!ajax_loading && datas.dataList.length > 0 && datas.cur_cat < 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.poster != ''" ng-src="{{d.poster}}"></td>
                 <td ng-bind="d.name">--</td>
-                <td ng-bind="d.price">--</td>
                 <td ng-bind="d.sn">--</td>
-                <td ng-bind="d.gid">--</td>
-                <td ng-bind="d.count">--</td>
-                <td><span class="dot-text" ng-bind="datas.suggestGoodsStates[d.state][0]" ng-class="datas.suggestGoodsStates[d.state][1]">--</span></td>
+                <td ng-bind="d.click">--</td>
+                <td ng-bind="d.kind">--</td>
+                <td ng-bind="d.url">--</td>
                 <td>
                     <div class="dropdown">
                             <span class="icons glyphicon glyphicon-option-horizontal"
                                   id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
-                            <li ng-if="d.state!=0"><a class="default" ng-click="item_ch_state(this, d.pk, 1);">上架</a></li>
-                            <li ng-if="d.state!=1"><a class="default" ng-click="item_ch_state(this, d.pk, 0);">下架</a></li>
-                            <li><a class="default" ng-click="pigeon_add(this, d);">编辑信息</a></li>
+                            <li><a class="default" ng-click="item_edit(this, d);">编辑信息</a></li>
+                            <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr ng-if="!ajax_loading && datas.dataList.length > 0 && datas.cur_cat >= 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.price">--</td>
+                <td ng-bind="d.sn">--</td>
+                <td ng-bind="d.gid">--</td>
+                <td ng-bind="d.count">--</td>
+                <td ng-bind="datas.catGoodsStates[d.state][0]" ng-class="datas.catGoodsStates[d.state][1]">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_edit(this, d);">编辑信息</a></li>
                             <li><a class="default" ng-click="item_remove(this, d);">删除信息</a></li>
                         </ul>
                     </div>
@@ -73,7 +100,7 @@
         </table>
         <div class="clearfix"></div>
 
-        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+        <!--<page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>-->
 
         <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
             <span class="icons info_icon"></span>
@@ -81,44 +108,126 @@
         </p>
         <div class="clearfix"></div>
 
-        <!-- 编辑场次鸽信息 -->
-        <div class="modal fade" id="pigeonChange" role="dialog">
+        <!-- 编辑横幅信息 -->
+        <div class="modal fade" id="bannerEdit" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title form-inline">
-                            <em>上架/编辑新物品</em>
-                            <input disabled class="form-control" ng-model="datas.selected_item.pk">
-                            <div class="input-group pull-right">
-                                <input type="text" class="form-control" ng-model="datas.query" placeholder="输入商品编号或商品名搜索">
-                                <div class="input-group-addon" ng-click="get_pigeon_list(this);">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </div>
-                            </div>
+                            <em>上架/编辑横幅</em>
+                            <input type="hidden" disabled class="form-control" ng-model="datas.selected_item.pk">
                         </h4>
                     </div>
                     <div class="modal-body grey-bg">
-                        <table class="table table-noborder table-condensed" ng-show="!ajax_loading && datas.pigeon_list.length > 0">
-                            <tbody>
-                            <tr ng-if="!ajax_loading && datas.pigeon_list.length <= 0">
-                                <td colspan="7">没有数据</td>
-                            </tr>
-                            <tr ng-if="!ajax_loading && datas.pigeon_list.length > 0"
-                                ng-repeat="p in datas.pigeon_list">
-                                <td><input type="radio" name="pigeon" ng-model="datas.selected_item_pigeon_gid"
-                                           ng-value="p.gid"
-                                           ng-checked="p.gid == datas.selected_pigeon.gid ?'checked': ''"></td>
-                                <td ng-bind="p.gid">--</td>
-                                <td ng-bind="p.name">--</td>
-                                <td width="50"><img ng-show="p.thumbnail!=''" ng-src="{{p.thumbnail}}" class="imgsmall"></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">横幅描述</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" ng-model="datas.selected_item.name">
+                                </div>
+                            </div>
+                            <div class="form-inline form-group">
+                                <label class="col-sm-2 control-label">横幅类型</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control">
+                                        <option value="{{t}}"
+                                                ng-repeat="t in datas.bannerKinds"
+                                                ng-bind="t"
+                                                ng-selected="datas.selected_item.kind==t"></option>
+                                    </select>
+                                </div>
+                                <label class="col-sm-2 control-label">链接编号</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" ng-model="datas.selected_item.url">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2 row-title">
+                                    横幅图
+                                </div>
+                                <div class="col-sm-10">
+                                    <span class="upload-file" ng-show="datas.selected_item.poster != ''">
+                                        <span class="icons icon-remove" ng-click="remove_poster();"></span>
+                                        <img class="upload-file"
+                                             ng-src="{{datas.selected_item.poster}}">
+                                    </span>
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <div ng-click="add_files('poster');" class="upload-file"
+                                         ng-show="!(datas.selected_item.poster != '')">+</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-default" ng-click="pigeon_remove(this);">删除</button>
-                        <button type="button" class="btn btn-primary" ng-click="pigeon_update(this);">确定修改</button>
+                        <button type="button" class="btn btn-primary" ng-click="item_update(this);">确定修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 编辑分类 -->
+        <div class="modal fade" id="catEdit" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>上架/编辑物品</em>
+                            <input type="hidden" disabled class="form-control" ng-model="datas.selected_item.pk">
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            <div class="row form-withmargin">
+                                <div class="col-sm-6 row-group" style="margin-bottom: 20px;" ng-repeat="c in datas.cat_list">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <span class="row-group-title" ng-bind="'入口'+($index+1)"></span>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <span class="row-group-cont">
+                                                <input value="{{c.name}}" />
+                                                <span class="upload-file upload-file-sm" ng-show="c.thumbnail != ''">
+                                                    <span class="icons icon-remove" ng-click="remove_thumbnail(c, $index);"></span>
+                                                    <img class="upload-file upload-file-sm"
+                                                         ng-src="{{c.thumbnail}}">
+                                                </span>
+                                                <div ng-click="add_thumbnail('thumbnail', $index);" class="upload-file upload-file-sm"
+                                                     ng-show="!(c.thumbnail != '')">+</div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" ng-click="cat_update(this);">确定修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑分类商品 -->
+        <div class="modal fade" id="itemEdit" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>上架/编辑物品</em>
+                            <input type="hidden" disabled class="form-control" ng-model="datas.selected_item.pk">
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            未知物品列表
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" ng-click="item_update(this);">确定修改</button>
                     </div>
                 </div>
             </div>

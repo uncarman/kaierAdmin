@@ -35,7 +35,7 @@
                 <td colspan="7">没有数据</td>
             </tr>
             <tr ng-if="!ajax_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
-                <td><img class="imgsmall" ng-show="d.cover != ''" ng-src="{{d.thumbnail}}"></td>
+                <td><img class="imgsmall" ng-show="d.thumbnail != ''" ng-src="{{d.thumbnail}}"></td>
                 <td ng-bind="d.name">--</td>
                 <td ng-bind="d.price">--</td>
                 <td ng-bind="d.sn">--</td>

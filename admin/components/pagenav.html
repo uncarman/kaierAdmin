@@ -6,7 +6,7 @@
             </a>
         </li>
         <li ng-repeat="p in datas.pageList"
-            ng-click="get_datas(p);"
+            ng-click="get_datas(this, p);"
             ng-class="p == datas.cur_page ? 'active' : ''" ><a ng-bind="p">--</a></li>
         <li ng-click="get_datas_next(this);">
             <a aria-label="Next">

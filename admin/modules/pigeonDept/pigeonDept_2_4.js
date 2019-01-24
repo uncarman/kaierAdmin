@@ -31,7 +31,8 @@ define(function (require) {
             };
             return global.return_promise($scope, param);
         }
-        $scope.get_cat_list = function () {
+        // 页面加载, 获取所有分类
+        $scope.get_cat_list = function ($scope) {
             $scope.ajax_get_cat_list()
                 .then($scope.get_cat_list_callback)
                 .catch($scope.ajax_catch);
@@ -39,23 +40,21 @@ define(function (require) {
         $scope.get_cat_list_callback = function (data) {
             $scope.$apply(function () {
                 $scope.datas.cat_list = data.data;
-                $scope.get_cat_datas();
+                $scope.get_cat_datas($scope);
             });
         }
-        
+
+        // 点击, 切换分类, 获取选中分类内数据
         $scope.change_cat = function (pk) {
             $scope.datas.cur_cat = pk;
-            if(pk > 0) {
-                $scope.get_cat_datas();
-            } else {
-                $scope.get_banner_datas();
-            }
+            $scope.get_cat_datas($scope);
         }
 
+        // 分类内容
         $scope.ajax_get_cat_datas = function() {
             var param = {
                 _method: 'get',
-                _url: settings.ajax_func.mallStaticPigeonList,
+                _url: settings.ajax_func.mallCatGoodsList,
                 _param: {
                     page: $scope.datas.cur_page,
                     state: $scope.datas.opt.state,
@@ -63,10 +62,27 @@ define(function (require) {
             };
             return global.return_promise($scope, param);
         }
-        $scope.get_cat_datas = function () {
-            if($scope.datas.cur_cat> 0 ){
+        // banner 内容
+        $scope.ajax_get_banner_datas = function() {
+            var param = {
+                _method: 'get',
+                _url: settings.ajax_func.mallBannerList,
+                _param: {
+                }
+            };
+            return global.return_promise($scope, param);
+        }
+
+        // 根据选中分类, 获取分类内容
+        $scope.get_cat_datas = function ($scope, state) {
+            if($scope.datas.cur_cat > 0 ){
+                $scope.datas.opt.state = typeof state != "undefined" ? state : $scope.datas.opt.state;
                 $scope.ajax_get_cat_datas()
-                    .then(get_cat_datas_callback)
+                    .then($scope.get_cat_datas_callback)
+                    .catch($scope.ajax_catch);
+            } else {
+                $scope.ajax_get_banner_datas()
+                    .then($scope.get_banner_datas_callback)
                     .catch($scope.ajax_catch);
             };
         }
@@ -81,16 +97,29 @@ define(function (require) {
                 }
             });
         }
+        $scope.get_banner_datas_callback = function(data){
+            $scope.$apply(function(){
+                $scope.ajax_loading = false;
+                $scope.datas.dataList = data.data;
+            });
+        }
 
         $scope.item_create = function() {
             $scope.datas.item_view_type = "edit";
-            $scope.datas.selected_item = {
-                pk: 0,
-                thumbnail: "",
-                sex: 0,
-            };
-            $('#pigeonChange').modal('show');
-            $scope.auction_pigeon_list($scope, $scope.datas.selected_item);
+            if($scope.datas.cur_cat < 0) {
+                $scope.datas.selected_item = {
+                    pk: 0,
+                    poster: "",
+                };
+                $('#bannerEdit').modal('show');
+            } else {
+                $scope.datas.selected_item = {
+                    pk: 0,
+                    thumbnail: "",
+                };
+                $('#itemEdit').modal('show');
+            }
+            //$scope.auction_pigeon_list($scope, $scope.datas.selected_item);
         }
 
         // 修改状态
@@ -123,13 +152,14 @@ define(function (require) {
             };
             return global.return_promise($scope, param);
         }
-        $scope.item_view = function ($scope, item) {
-            $scope.datas.selected_item = item;
-            $('#goodEdit').modal('show');
-        }
         $scope.item_edit = function ($scope, item) {
+            $scope.datas.item_view_type = "edit";
             $scope.datas.selected_item = item;
-            $('#goodEdit').modal('show');
+            if($scope.datas.cur_cat < 0) {
+                $('#bannerEdit').modal('show');
+            } else {
+                $('#itemEdit').modal('show');
+            }
         }
 
         // 单个商品更新
@@ -137,42 +167,69 @@ define(function (require) {
             var g = $scope.datas.selected_item;
             var param = {
                 _method: 'post',
-                _url: settings.ajax_func.mallAuction,
+                _url: settings.ajax_func.mailBanner,
                 _param: {
                     pk: g.pk,
-                    cover: g.cover,
+                    poster: g.poster,
                     name: g.name,
-                    deadline: g.deadline,
+                    sn: g.sn,
+                    kind: g.kind,
+                    url: g.url,
                 }
             };
             return global.return_promise($scope, param);
         }
         $scope.item_update_callback = function (data) {
-            $scope.reset_datas($scope);
-            $('#goodEdit').modal('hide');
+            if($scope.datas.cur_cat < 0) {
+                $scope.get_cat_datas($scope);
+                $('#bannerEdit').modal('hide');
+            } else {
+                $scope.get_cat_datas($scope);
+                $('#itemEdit').modal('hide');
+            }
         }
 
-        // 删除单个商品
-        // $scope.ajax_remove_data = function(pk) {
-        //     var param = {
-        //         _method: 'delete',
-        //         _url: settings.ajax_func.mallPigeon,
-        //         _param: {
-        //             pk: pk,
-        //         }
-        //     };
-        //     return global.return_promise($scope, param);
-        // }
-        // $scope.item_remove_callback = function (data) {
-        //     $scope.reset_datas($scope);
-        // }
+        // 删除banner
+        $scope.ajax_remove_banner = function(pk) {
+            var param = {
+                _method: 'post',
+                _url: settings.ajax_func.mailBannerDel,
+                _param: {
+                    pk: pk,
+                }
+            };
+            return global.return_promise($scope, param);
+        }
+        $scope.ajax_remove_cat_item = function(pk) {
+            var param = {
+                _method: 'post',
+                _url: settings.ajax_func.mallCatGoods,
+                _param: {
+                    pk: pk,
+                    operate: "del"
+                }
+            };
+            return global.return_promise($scope, param);
+        }
+        $scope.item_remove = function ($scope, item) {
+            if($scope.datas.cur_cat < 0) {
+                $scope.ajax_remove_banner($scope, item.pk)
+                    .then($scope.item_remove_callback)
+                    .catch($scope.ajax_catch);
+            } else {
+                $scope.ajax_remove_cat_item($scope, item.pk)
+                    .then($scope.item_remove_callback)
+                    .catch($scope.ajax_catch);
+            }
+        }
+        $scope.item_remove_callback = function (data) {
+            $scope.get_cat_datas($scope);
+        }
 
         // 上传文件
         $scope.add_files = function (tp) {
-            if($scope.datas.selected_item["pk"] >= 0 ) {
-                var fileId = "poster_file";
-                global.base_add_files($scope, fileId, tp);
-            }
+            var fileId = "poster_file";
+            global.base_add_files($scope, fileId, tp);
         };
         $scope.add_file_callback = function (data) {
             $scope.$apply(function () {
@@ -190,15 +247,60 @@ define(function (require) {
                 $("#poster_file").val("");
             });
         }
-        $scope.remove_cover = function () {
+        $scope.remove_poster = function () {
             if($scope.datas.selected_item) {
                 try {
-                    $scope.datas.selected_item["cover"] = "";
+                    $scope.datas.selected_item["poster"] = "";
                 } catch (e) {
                     // pass
                 }
             }
         }
+
+
+        // 编辑分类
+        $scope.cat_edit = function ($scope) {
+            $('#catEdit').modal('show');
+        }
+        $scope.remove_thumbnail = function (c) {
+            c.thumbnail = "";
+        }
+        $scope.add_thumbnail = function (c, ind) {
+            $scope.datas.cur_cat_ind = ind;
+            var fileId = "poster_file";
+            global.base_add_files($scope, fileId, "thumbnail", $scope.add_thumbnail_callback);
+        }
+        $scope.add_thumbnail_callback = function (data) {
+            $scope.$apply(function () {
+                $scope.datas.cat_list[$scope.datas.cur_cat_ind]["thumbnail"] = data.data.url;
+            });
+        }
+
+        // 更新分类
+        $scope.cat_update = function () {
+            for(var i in $scope.datas.cat_list) {
+                $scope.ajax_cat_update($scope.datas.cat_list[i])
+                    .then($scope.cat_update_callback)
+                    .catch($scope.ajax_catch);
+            }
+        }
+        $scope.ajax_cat_update = function (cat) {
+            var param = {
+                _method: 'post',
+                _url: settings.ajax_func.mallCat,
+                _param: {
+                    pk: cat.pk,
+                    thumbnail: cat.thumbnail,
+                    name: cat.name,
+                }
+            };
+            return global.return_promise($scope, param);
+        }
+        $scope.cat_update_callback = function (data) {
+            $('#catEdit').modal('hide');
+        }
+
+
 
         // 查看场次鸽列表
         $scope.ajax_auction_pigeon_list = function ($scope, item) {
