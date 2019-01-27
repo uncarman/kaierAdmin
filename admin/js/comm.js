@@ -6,7 +6,10 @@ define(function (require, exports, module) {
     };
 
     var settings = {
+        default_page : "login",
+
         default_datas :{
+
             upload_file_bg: 'imgs/default_upload.png',
 
             ajax_loading: false,  // 是否正在执行ajax
@@ -139,7 +142,6 @@ define(function (require, exports, module) {
 
 
         },
-        default_page : "dashboard",
 
         is_fake_ajax : is_fake_ajax,
         is_debug : is_debug,
