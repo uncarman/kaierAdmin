@@ -738,5 +738,188 @@ var fake_data = {
                 }
             ]
         }
+    },
+
+    "/api/backend/v1/business/user/list":{
+        data: {
+            total_num: 123,
+            total_page: 12,
+            page:2,
+            items: [
+                {
+                    pk: 1,
+                    avatar: "http://cdn.iciba.com/news/word/20181225.jpg",
+                    phone: 15821130111,
+                    name: "户主名字",
+                    spend: 123,
+                    kind: "类型1",
+                    ctime: "2018-12-28 12:11:07",
+                    vialotion: 4,
+                    order:2,
+                },
+                {
+                    pk: 1,
+                    avatar: "http://cdn.iciba.com/news/word/20181225.jpg",
+                    phone: 15821130111,
+                    name: "户主名字2",
+                    spend: 111,
+                    kind: "类型2",
+                    ctime: "2018-12-28 12:11:07",
+                    vialotion: 1,
+                    order:0,
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/user/address": {
+        data: [
+            {
+                phone: 15821130111,
+                name: "户主名字2",
+                area: "浙江省-杭州市-西湖区",
+                street: "万塘路18号",
+            }
+        ]
+    },
+
+    "/api/backend/v1/business/user/order/list": {
+        data: {
+            total_num: 123,
+            total_page: 12,
+            page:2,
+            items: [
+                {
+                    pk: 1,
+                    oid: 15821130111,
+                    ctime: "2018-12-28 12:11:07",
+                    price: 121,
+                    state: 1,
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/order/list": {
+        data: {
+            total_num: 123,
+            total_page: 12,
+            page:2,
+            items: [
+                {
+                    pk: 1,
+                    oid: 15821130111,
+                    phone: 15811111111,
+                    count: 5,
+                    ctime: "2018-12-28 12:11:07",
+                    price: 121,
+                    origin: "网站",
+                    kind: 1,
+                    state: 1,
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/order":{
+        data: {
+            pk: 1,
+            oid: 15821130111,
+            phone: 15811111111,
+            count: 5,
+            ctime: "2018-12-28 12:11:07",
+            price: 121,
+            origin: "网站",
+            kind: 1,
+            state: 1,
+            freight: 123,
+            paytype: "线下支付",
+            address: {
+                name: "老王",
+                phone: 15988888888,
+                area: "浙江省-杭州市-西湖区",
+                street: "万塘路18号",
+            },
+            carriage: "暂无",
+            items: [
+                {
+                    price: 2,
+                    count: 5,
+                    gid: 121121,
+                    name: "拍卖鸽子的商品标题在此处"
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/consignment/list":{
+        data: {
+            total_num: 123,
+            total_page: 12,
+            page:2,
+            items: [
+                {
+                    pk: 1,
+                    oid: 15821130111,
+                    phone: 15811111111,
+                    name: "老王",
+                    address: "李家村",
+                    count: 1,
+                    kind: 1,
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/consignment":{
+        data: {
+            pk: 1,
+            oid: 15821130111,
+            phone: 15811111111,
+            name: "老王",
+            address: "李家村",
+            count: 1,
+            kind: 1,
+            items: [
+                {
+                    count: 1,
+                    gid:123,
+                    name: "商品1",
+                    location: "仓库1"
+                }
+            ]
+        }
+    },
+
+    "/api/backend/v1/business/vialotion/list": {
+        data: {
+            total_num: 123,
+            total_page: 12,
+            page:2,
+            items: [
+                {
+                    pk: 1,
+                    kind: 1,
+                    target: 15821130111,
+                    date: "2018-12-28 12:11:07",
+                    phone: 15811111111,
+                    price: 121,
+                    deadline: "2018-12-30 12:11:07",
+                    vialotion: 0,
+                    state: 1,
+                },
+                {
+                    pk: 2,
+                    kind: 1,
+                    target: 15821130111,
+                    date: "2018-12-28 12:11:07",
+                    phone: 15811111111,
+                    price: 121,
+                    deadline: "2018-12-30 12:11:07",
+                    vialotion: 1,
+                    state: 1,
+                }
+            ]
+        }
     }
 }

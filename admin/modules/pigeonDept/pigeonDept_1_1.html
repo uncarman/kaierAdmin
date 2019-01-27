@@ -11,8 +11,8 @@
             <div class="form-group pull-right" style="margin-left: 30px;">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入环号或商品名搜索">
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-search" ng-click="reset_data(this);"></span>
+                    <div class="input-group-addon" ng-click="reset_datas(this);">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                             <div class="pull-right">
                                 <button class="btn btn-default" data-dismiss="modal">取消</button>
                                 <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="item_edit(datas.selected_item.pk);">修改信息</button>
-                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view(this)" ng-click="item_update();">保存商品</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view(this)" ng-click="item_update(this);">保存商品</button>
                             </div>
                         </h4>
                     </div>
@@ -94,22 +94,30 @@
                                     <b>图片展示</b>首位为缩略图，展示图最多6张及小于10M的短视频
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row more_space">
                                 <div class="col-sm-12">
-                                    <span class="imgmiddle" ng-repeat="p in datas.selected_item.posters">
-                                        <span class="icons icon-remove" ng-click="remove_poster($index);"></span>
-                                        <img class="imgmiddle"
-                                             ng-src="{{p.url}}"
-                                             ng-if="p.kind == 0">
-                                        <video class="imgmiddle" controls="controls"
+                                    <input type="file" id="poster_file" style="display: none;">
+                                    <span class="upload-file">
+                                        <!--<span ng-show="!is_view(this)" class="icons icon-remove" ng-click="remove_thumbnail();"></span>-->
+                                        <img class="upload-file" ng-click="add_files('thumbnail');"
+                                             ng-src="{{datas.selected_item.thumbnail != '' ? datas.selected_item.thumbnail : datas.upload_file_bg}}">
+                                    </span>
+                                    <!--<div ng-click="add_files('thumbnail');" class="upload-file"-->
+                                         <!--ng-show="!(datas.selected_item.thumbnail && datas.selected_item.thumbnail != '')">+</div>-->
+
+                                    <span class="upload-file" ng-repeat="p in datas.selected_item.posters">
+                                        <!--<span class="icons icon-remove" ng-click="remove_poster($index);"></span>-->
+                                        <img class="upload-file"
+                                             ng-src="{{p.url != '' ? p.url : datas.upload_file_bg}}"
+                                             ng-if="p.kind == 0" ng-click="add_files('posters', $index);">
+                                        <video class="upload-file"
                                                ng-src="{{p.url}}"
-                                               ng-if="p.kind == 1" >
+                                               ng-if="p.kind == 1" ng-click="add_files('posters', $index, 1);">
                                             您的浏览器不支持 video 标签。
                                         </video>
                                     </span>
 
-                                    <input type="file" id="poster_file" style="display: none;">
-                                    <a ng-click="add_files();" ng-show="datas.selected_item.posters.length < 6">上传文件</a>
+                                    <!--<a ng-click="add_files();" ng-show="datas.selected_item.posters.length < 6">上传文件</a>-->
                                 </div>
                             </div>
                         </div>
@@ -153,8 +161,12 @@
                                     </div>
                                     <div class="col-sm-10 row-content">
                                         <span ng-bind="datas.selected_item.deadline" ng-show="is_view(this)"></span>
-                                        <input class="form-control w30" ng-show="!is_view(this)" ng-model="datas.selected_item.deadline">
-                                        <span class="text-warning" ng-show="!is_view(this)">不填写则显示为库存充足</span>
+                                        <!--<input class="form-control w30 J-datepicker-range-day">-->
+                                        <div class="c-datepicker-date-editor J-datepicker-day mt10" ng-show="!is_view(this)">
+                                            <input type="text" autocomplete="off"  ng-model="datas.selected_item.deadline"
+                                                   placeholder="选择日期" class="c-datepicker-data-input only-date" value="">
+                                        </div>
+                                        <span class="text-warning">不填写则显示为库存充足</span>
                                     </div>
                                 </div>
                                 <div class="row form-inline">

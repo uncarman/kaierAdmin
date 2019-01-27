@@ -1,0 +1,327 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody pigeonDept_3_2">
+
+        <div class="form-inline body-header form-withmargin">
+            <div class="form-group pull-left">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入订单号搜索">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 0 ? '--primary' : ''" ng-click="reset_datas(this, 0);">拍卖</button>
+                <button type="button" class="btn" ng-class="datas.opt.state == 1 ? '--primary' : ''" ng-click="reset_datas(this, 1);">商城</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>订单号</th>
+                <th>下单日期</th>
+                <th>下单人</th>
+                <th>订单金额</th>
+                <th>商品数量</th>
+                <th>渠道来源</th>
+                <th>订单类型</th>
+                <th>订单状态</th>
+                <th>快速操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="9">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td ng-bind="d.oid"></td>
+                <td ng-bind="d.ctime">--</td>
+                <td ng-bind="d.phone">--</td>
+                <td ng-bind="d.price">--</td>
+                <td ng-bind="d.count">--</td>
+                <td ng-bind="d.origin">--</td>
+                <td ng-bind="datas.orderKinds[d.kind]">--</td>
+                <td ng-bind="datas.orderStatus[d.state][0]" ng-class="datas.orderStatus[d.state][1]">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_view(this, d);">查看详情</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+        <!--商品详情-->
+        <div class="modal model-rt" id="goodDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>订单详细</em>
+                            <span ng-bind="datas.orderStatus[datas.selected_item.state][0]" ng-class="datas.orderStatus[datas.selected_item.state][0]"></span>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <!--<button class="btn btn-primary" data-dismiss="modal" ng-click="">撤销订单</button>-->
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>订单信息</b>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        订单号:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.oid" ng-show="is_view(this)"></span>
+                                        <input class="form-control" disabled  ng-show="!is_view(this)" ng-model="datas.selected_item.oid">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        下单账号:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.phone" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.phone">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        下单日期:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.ctime" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.ctime">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        支付方式:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.paytype" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.paytype">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        订单类型:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.orderKinds[datas.selected_item.kind]" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.kind">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        订单来源:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.origin" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.origin">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        订单状态:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.orderStatus[datas.selected_item.state][0]" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.state">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        保证金:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        0
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>地址信息</b>
+                                    <a class="pull-right" ng-click="edit_addr(this);">
+                                        <span class="icons icon-edit"></span>
+                                        修改地址
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        收件人:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.address.name" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.address.name">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        收件电话:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.address.phone" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.address.phone">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        收件地址:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.address.area + ' ' + datas.selected_item.address.street" ng-show="is_view(this)"></span>
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        配送信息:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.carriage" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.carriage">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>商品与金额</b>
+                                    <a class="pull-right" ng-click="edit_post(this);">
+                                        <span class="icons icon-edit"></span>
+                                        编辑邮费
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <table class="table table-hover" ng-show="!is_loading && datas.selected_item.items.length > 0">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>订单号</th>
+                                            <th>商品名</th>
+                                            <th>单价(元)</th>
+                                            <th>数量</th>
+                                            <th>金额</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="o in datas.selected_item.items">
+                                            <td></td>
+                                            <td ng-bind="o.gid"></td>
+                                            <td ng-bind="o.name"></td>
+                                            <td ng-bind="o.price"></td>
+                                            <td ng-bind="o.count"></td>
+                                            <td ng-bind="o.price*o.count"></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>物流费用</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td ng-bind="datas.selected_item.freight"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配送信息 -->
+        <div class="modal fade" id="addrEdit" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>编辑配送信息</em>
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">收件人:</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" ng-model="datas.selected_item._address.name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">联系电话:</label>
+                                <div class="col-sm-5">
+                                    <input type="number" class="form-control" ng-model="datas.selected_item._address.phone">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">详细地址:</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" ng-model="datas.selected_item._address.area">
+                                    <input class="form-control" ng-model="datas.selected_item._address.street">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="ch_addr(this);">确定修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑邮费 -->
+        <div class="modal fade" id="postEdit" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>编辑邮费</em>
+                            <span>请与用户联系确认，一旦创建将不允许更改！</span>
+                        </h4>
+                    </div>
+                    <div class="modal-body grey-bg">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">修复邮费:</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" ng-model="datas.selected_item._freight">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="ch_post(this);">确定修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

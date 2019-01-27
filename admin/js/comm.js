@@ -7,6 +7,8 @@ define(function (require, exports, module) {
 
     var settings = {
         default_datas :{
+            upload_file_bg: 'imgs/default_upload.png',
+
             ajax_loading: false,  // 是否正在执行ajax
 
             // 分页参数
@@ -94,7 +96,7 @@ define(function (require, exports, module) {
             financeStates: {
                 0: ["待审核", "dot-text dot-primary"],
                 1: ["凭证无效", "dot-text dot-danger"],
-                1: ["已确认", ""],
+                2: ["已确认", ""],
                 10: ["已处理", ""],
             },
 
@@ -113,7 +115,28 @@ define(function (require, exports, module) {
             accountStatus: {
                 0: ["启用中", "dot-primary"],
                 1: ["已停用", "dot-danger"],
-            }
+            },
+
+            orderStatus: {
+                0: ["等待确认运费", "dot-default"],
+                1: ["等待付款", "dot-default"],
+                2: ["等待审核", "dot-default"],
+                3: ["发货中", "dot-default"],
+                4: ["配送中", "dot-default"],
+                5: ["已签收", "dot-default"],
+                5: ["已违约", "dot-danger"],
+            },
+            orderKinds: {
+                0: "拍卖",
+                1: "商城",
+            },
+
+            vialotionStatus: {
+                0: ["未提交凭证", "dot-default"],
+                1: ["审核中", "dot-default"],
+                2: ["凭证无效", "dot-default"],
+            },
+
 
         },
         default_page : "dashboard",
@@ -134,7 +157,7 @@ define(function (require, exports, module) {
 
         ajax_func: {
             login: "login",
-            getLoginCode: "api/backend/v1/base/verify",
+            getLoginCode: "/api/backend/v1/base/verify",
             user: "user",
             getList: "getList",
             profile: "profile",
@@ -178,6 +201,24 @@ define(function (require, exports, module) {
             "mailBanner": "/api/backend/v1/mall/banner", // Mall - 商城-横幅编辑
             "mailBannerDel": "/api/backend/v1/mall/banner/del", // Mall - 商城-横幅删除
 
+            // pigeonDept_3_1
+            "businessUserList": "/api/backend/v1/business/user/list", // Business - 用户-用户列表
+            "businessUserAddress": "/api/backend/v1/business/user/address", // Business - 用户-用户地址信息
+            "businessUserOrderList": "/api/backend/v1/business/user/order/list", // Business - 用户-用户地址信息
+
+            // pigeonDept_3_2
+            "businessOrderList": "/api/backend/v1/business/order/list", // Business - 用户-用户列表
+            "businessOrder": "/api/backend/v1/business/order", // Business - 订单-订单详细
+            "businessOrderAddress": "/api/backend/v1/business/order/address", // Business - 订单-订单配送地址编辑
+            "businessOrderFreight": "/api/backend/v1/business/order/freight", // Business - 订单-订单配送邮费编辑
+
+            // pigeonDept_3_3
+            "businessConsignmentList": "/api/backend/v1/business/consignment/list", // Business - 发货-待发货订单列表
+            "businessConsignment": "/api/backend/v1/business/consignment", // Business - 发货-待发货订单信息, Business - 发货-发货确认
+
+            // pigeonDept_3_4
+            "businessVialotionList": "/api/backend/v1/business/vialotion/list", // Business - 违约-违约列表
+            "businessVialotion": "/api/backend/v1/business/vialotion", // Business - 违约-认定违约
 
             // stock_1_1
             "storePigeonList": "/api/backend/v1/store/pigeon/list",  // Store - 库存鸽-库存鸽列表
@@ -236,18 +277,24 @@ define(function (require, exports, module) {
                 "children": [
                     {
                         "page": "datas_1",
+                        "link": "datas_1_1",
                         "name": "鸽业数据",
-                        "link": "datas_1",
+                        "icon": "imgs/default_header_icon.png",
+                        "children": []
                     },
                     {
                         "page": "datas_2",
                         "name": "公棚数据",
-                        "link": "datas_2",
+                        "icon": "imgs/default_header_icon.png",
+                        "link": "datas_2_1",
+                        "children": []
                     },
                     {
                         "page": "datas_3",
                         "name": "俱乐部数据",
-                        "link": "datas_3",
+                        "icon": "imgs/default_header_icon.png",
+                        "link": "datas_3_1",
+                        "children": []
                     }
                 ]
             },
@@ -308,9 +355,35 @@ define(function (require, exports, module) {
                     },
                     {
                         "page": "pigeonDept_3",
-                        "link": "pigeonDept_3",
+                        "link": "pigeonDept_3_1",
                         "name": "用户订单",
                         "icon": "imgs/default_header_icon.png",
+                        "children": [
+                            {
+                                "page": "pigeonDept_3_1",
+                                "name": "用户中心",
+                                "icon": "",
+                                "link": "pigeonDept_3_1",
+                            },
+                            {
+                                "page": "pigeonDept_3_2",
+                                "name": "全部订单",
+                                "icon": "",
+                                "link": "pigeonDept_3_2",
+                            },
+                            {
+                                "page": "pigeonDept_3_3",
+                                "name": "发货管理",
+                                "icon": "",
+                                "link": "pigeonDept_3_3",
+                            },
+                            {
+                                "page": "pigeonDept_3_4",
+                                "name": "违约管理",
+                                "icon": "",
+                                "link": "pigeonDept_3_4",
+                            }
+                        ]
                     }
                 ]
             },
@@ -575,6 +648,8 @@ define(function (require, exports, module) {
                     {
                         if(angular.isFunction(error_func)){
                             error_func(data);
+                        } else {
+                            global.default_ajax_error_func(data);
                         }
                     }
                 }

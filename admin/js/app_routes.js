@@ -95,23 +95,23 @@ define(function (require) {
             })
 
             ///////////// 数据表
-            .state('datas_1', {
-                url: '/datas_1',
-                templateUrl: './modules/datas/datas_1.html?v='+version,
-                controllerUrl: './modules/datas/datas_1',
-                controller: 'datas_1'
+            .state('datas_1_1', {
+                url: '/datas_1_1',
+                templateUrl: './modules/datas/datas_1_1.html?v='+version,
+                controllerUrl: './modules/datas/datas_1_1',
+                controller: 'datas_1_1'
             })
-            .state('datas_2', {
-                url: '/datas_2',
-                templateUrl: './modules/datas/datas_2.html?v='+version,
-                controllerUrl: './modules/datas/datas_2',
-                controller: 'datas_2'
+            .state('datas_2_1', {
+                url: '/datas_2_1',
+                templateUrl: './modules/datas/datas_2_1.html?v='+version,
+                controllerUrl: './modules/datas/datas_2_1',
+                controller: 'datas_2_1'
             })
-            .state('datas_3', {
-                url: '/datas_3',
-                templateUrl: './modules/datas/datas_3.html?v='+version,
-                controllerUrl: './modules/datas/datas_3',
-                controller: 'datas_3'
+            .state('datas_3_1', {
+                url: '/datas_3_1',
+                templateUrl: './modules/datas/datas_3_1.html?v='+version,
+                controllerUrl: './modules/datas/datas_3_1',
+                controller: 'datas_3_1'
             })
 
             ////////// 鸽业部门
@@ -151,12 +151,31 @@ define(function (require) {
                 controllerUrl: './modules/pigeonDept/pigeonDept_2_4',
                 controller: 'pigeonDept_2_4'
             })
-            .state('pigeonDept_3', {
-                url: '/pigeonDept_3',
-                templateUrl: './modules/pigeonDept/pigeonDept_3.html?v='+version,
-                controllerUrl: './modules/pigeonDept/pigeonDept_3',
-                controller: 'pigeonDept_3'
+            .state('pigeonDept_3_1', {
+                url: '/pigeonDept_3_1',
+                templateUrl: './modules/pigeonDept/pigeonDept_3_1.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_3_1',
+                controller: 'pigeonDept_3_1'
             })
+            .state('pigeonDept_3_2', {
+                url: '/pigeonDept_3_2',
+                templateUrl: './modules/pigeonDept/pigeonDept_3_2.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_3_2',
+                controller: 'pigeonDept_3_2'
+            })
+            .state('pigeonDept_3_3', {
+                url: '/pigeonDept_3_3',
+                templateUrl: './modules/pigeonDept/pigeonDept_3_3.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_3_3',
+                controller: 'pigeonDept_3_3'
+            })
+            .state('pigeonDept_3_4', {
+                url: '/pigeonDept_3_4',
+                templateUrl: './modules/pigeonDept/pigeonDept_3_4.html?v='+version,
+                controllerUrl: './modules/pigeonDept/pigeonDept_3_4',
+                controller: 'pigeonDept_3_4'
+            })
+
 
             ////////// 库存管理
             .state('stock_1_1', {  // 信鸽档案

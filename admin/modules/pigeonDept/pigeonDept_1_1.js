@@ -48,16 +48,33 @@ define(function (require) {
         }
 
         $scope.item_create = function() {
-            $scope.datas.detail_view = "edit";
+            $scope.datas.item_view_type = "edit";
             $scope.datas.selected_item = {
                 pk: 0,
                 thumbnail: "",
                 posters:[],
-                selltype: settings.goodSelltypes[0],
-                transtype: settings.goodTranstypes[0],
+                selltype: settings.default_datas.goodSelltypes[0],
+                transtype: settings.default_datas.goodTranstypes[0],
             };
+            $scope.fill_posters();
             $scope.datas.selected_item.info_h5 = $sce.trustAsHtml("");
             $('#goodDetail').modal('show');
+        }
+
+        $scope.fill_posters = function () {
+            // 补充空poster
+            var tmp = [];
+            for(var i=0; i<6; i++){
+                if($scope.datas.selected_item.posters[i] && $scope.datas.selected_item.posters[i].url != "") {
+                    tmp.push($scope.datas.selected_item.posters[i]);
+                } else {
+                    tmp.push({
+                        kind: (i==0 ? 1 : 0),
+                        url: "",
+                    })
+                }
+            }
+            $scope.datas.selected_item.posters = tmp;
         }
 
         // 获取单个商品详情
@@ -74,8 +91,9 @@ define(function (require) {
 
         $scope.item_view_callback = function(data) {
             $scope.$apply(function () {
-                $scope.datas.detail_view = "view";
+                $scope.datas.item_view_type = "view";
                 $scope.datas.selected_item = data.data;
+                $scope.fill_posters();
                 $scope.datas.selected_item.info_h5 = $sce.trustAsHtml(Base64.decode((data.data.info ? data.data.info : "")));
                 $('#goodDetail').modal('show');
             });
@@ -83,8 +101,9 @@ define(function (require) {
 
         $scope.item_edit_callback = function(data) {
             $scope.$apply(function () {
-                $scope.datas.detail_view = "edit";
+                $scope.datas.item_view_type = "edit";
                 $scope.datas.selected_item = data.data;
+                $scope.fill_posters();
                 $scope.datas.selected_item.info_h5 = $sce.trustAsHtml(Base64.decode((data.data.info ? data.data.info : "")));
                 $('#goodDetail').modal('show');
             });
@@ -131,24 +150,26 @@ define(function (require) {
             $scope.reset_datas($scope);
         }
 
-        $scope.add_files = function (tp) {
+        $scope.add_files = function (tp, ind) {
             if($scope.datas.selected_item["pk"] >= 0 ) {
                 var fileId = "poster_file";
-                global.base_add_files($scope, fileId);
+                $scope.datas.upload_file_posters_index = ind;
+                global.base_add_files($scope, fileId, tp);
             }
         };
         $scope.add_file_callback = function (data) {
             $scope.$apply(function () {
-                if(typeof $scope.datas.upload_file_type == "string" && $scope.datas.upload_file_type != "") {
-                    $scope.datas.selected_item[$scope.datas.upload_file_type] = data.data.url;
-                } else {
-                    $scope.datas.selected_item["posters"].push({
-                        kind: $scope.datas.upload_file_file_kind,
-                        url: data.data.url,
-                    });
-                    if($scope.datas.selected_item["thumbnail"] == "" && file_kind == 0) {
-                        $scope.datas.selected_item["thumbnail"] = data.data.url;
+                try {
+                    if(angular.isArray($scope.datas.selected_item[$scope.datas.upload_file_type])) {
+                        $scope.datas.selected_item[$scope.datas.upload_file_type][$scope.datas.upload_file_posters_index] = {
+                            kind: $scope.datas.upload_file_file_kind,
+                            url: data.data.url,
+                        };
+                    } else {
+                        $scope.datas.selected_item[$scope.datas.upload_file_type] = data.data.url;
                     }
+                } catch (e) {
+                    // pass
                 }
                 $("#poster_file").val("");
             });
@@ -165,10 +186,43 @@ define(function (require) {
                 }
             }
         }
+        $scope.remove_thumbnail = function () {
+            if($scope.datas.selected_item) {
+                try {
+                    $scope.datas.selected_item["thumbnail"] = "";
+                } catch (e) {
+                    // pass
+                }
+            }
+        }
 
 
         ////// 执行函数
         $scope.get_datas($scope);
+
+        //年月日范围
+        function shortcutMonth () {
+            // 当月
+            var nowDay = moment().get('date');
+            var prevMonthFirstDay = moment().subtract(1, 'months').set({ 'date': 1 });
+            var prevMonth2FirstDay = moment().subtract(2, 'months').set({ 'date': 1 });
+            var prevMonth3FirstDay = moment().subtract(3, 'months').set({ 'date': 1 });
+            var prevMonthDay = moment().diff(prevMonthFirstDay, 'days');
+            var prevMonth2Day = moment().diff(prevMonth2FirstDay, 'days');
+            var prevMonth3Day = moment().diff(prevMonth3FirstDay, 'days');
+            return {
+                now: '-' + (nowDay-1) + ',0',
+                prev: '-' + prevMonthDay + ',-' + nowDay,
+                prev2: '-' + prevMonth2Day + ',-' + (prevMonthDay+1),
+                prev3: '-' + prevMonth3Day + ',-' + (prevMonth2Day+1)
+            }
+        }
+
+        $(function(){
+            $('.J-datepicker-day').datePicker({
+                format:'YYYY-MM-DD',
+            });
+        });
 
     }])
 });

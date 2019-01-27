@@ -17,8 +17,8 @@ define(function (require) {
         var datas = {
             opt: {
                 state: "100",  // 默认全部
+                query: "",
             },
-            query: "",
         };
         $scope.datas = { ...settings.default_datas, ...datas };
 
@@ -189,6 +189,15 @@ define(function (require) {
         }
 
         // 添加场次鸽子
+        $scope.pigeon_create = function ($scope) {
+            $scope.datas.selected_pigeon = {
+                pk: 0,
+                thumbnail: "",
+                sex: 0,
+            };
+            $('#pigeonChange').modal('show');
+            $scope.get_pigeon_list($scope);
+        }
         $scope.pigeon_add = function ($scope, pigeon) {
             $scope.datas.selected_pigeon = pigeon;
             $scope.datas.selected_item_pigeon_gid = typeof pigeon == "object" ? pigeon.gid : 0;
@@ -231,11 +240,11 @@ define(function (require) {
             return global.return_promise($scope, param);
         }
         $scope.pigeon_update = function($scope){
-            if($scope.datas.selected_pigeon["pk"] > 0) {
+            //if($scope.datas.selected_pigeon["pk"] > 0) {
                 $scope.ajax_pigeon_change($scope, "save")
                     .then($scope.pigeon_update_callback)
                     .catch($scope.ajax_catch);
-            }
+            //}
         }
         $scope.pigeon_update_callback = function (data) {
             $('#pigeonChange').modal('hide');
@@ -246,6 +255,8 @@ define(function (require) {
                 $scope.ajax_pigeon_change($scope, "del")
                     .then($scope.pigeon_update_callback)
                     .catch($scope.ajax_catch);
+            } else {
+                $scope.pigeon_update_callback({});
             }
         }
 

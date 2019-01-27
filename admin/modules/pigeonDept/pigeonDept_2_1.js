@@ -50,11 +50,9 @@ define(function (require) {
             $scope.datas.item_view_type = "edit";
             $scope.datas.selected_item = {
                 pk: 0,
-                thumbnail: "",
-                posters:[],
-                sex: 0,
+                cover: "",
             };
-            $('#goodDetail').modal('show');
+            $('#goodEdit').modal('show');
         }
 
         // 修改状态

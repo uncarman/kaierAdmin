@@ -53,9 +53,26 @@ define(function (require) {
                 posters:[],
                 sex: 0,
             };
+            $scope.fill_posters();
             $('#goodDetail').modal('show');
         }
 
+
+        $scope.fill_posters = function () {
+            // 补充空poster
+            var tmp = [];
+            for(var i=0; i<6; i++){
+                if($scope.datas.selected_item.posters[i] && $scope.datas.selected_item.posters[i].url != "") {
+                    tmp.push($scope.datas.selected_item.posters[i]);
+                } else {
+                    tmp.push({
+                        kind: (i==0 ? 1 : 0),
+                        url: "",
+                    })
+                }
+            }
+            $scope.datas.selected_item.posters = tmp;
+        }
         // 获取单个商品详情
         $scope.ajax_item_detail = function(id) {
             var param = {
@@ -71,6 +88,7 @@ define(function (require) {
             $scope.$apply(function () {
                 $scope.datas.item_view_type = "view";
                 $scope.datas.selected_item = data.data;
+                $scope.fill_posters();
                 $('#goodDetail').modal('show');
             });
         }
@@ -78,6 +96,7 @@ define(function (require) {
             $scope.$apply(function () {
                 $scope.datas.item_view_type = "edit";
                 $scope.datas.selected_item = data.data;
+                $scope.fill_posters();
                 $('#goodDetail').modal('show');
             });
         }
@@ -124,24 +143,26 @@ define(function (require) {
         }
 
         // 上传文件
-        $scope.add_files = function (tp) {
+        $scope.add_files = function (tp, ind) {
             if($scope.datas.selected_item["pk"] >= 0 ) {
                 var fileId = "poster_file";
+                $scope.datas.upload_file_posters_index = ind;
                 global.base_add_files($scope, fileId, tp);
             }
         };
         $scope.add_file_callback = function (data) {
             $scope.$apply(function () {
-                if(typeof $scope.datas.upload_file_type == "string" && $scope.datas.upload_file_type != "") {
-                    $scope.datas.selected_item[$scope.datas.upload_file_type] = data.data.url;
-                } else {
-                    $scope.datas.selected_item["posters"].push({
-                        kind: $scope.datas.upload_file_file_kind,
-                        url: data.data.url,
-                    });
-                    if($scope.datas.selected_item["thumbnail"] == "" && file_kind == 0) {
-                        $scope.datas.selected_item["thumbnail"] = data.data.url;
+                try {
+                    if(angular.isArray($scope.datas.selected_item[$scope.datas.upload_file_type])) {
+                        $scope.datas.selected_item[$scope.datas.upload_file_type][$scope.datas.upload_file_posters_index] = {
+                            kind: $scope.datas.upload_file_file_kind,
+                            url: data.data.url,
+                        };
+                    } else {
+                        $scope.datas.selected_item[$scope.datas.upload_file_type] = data.data.url;
                     }
+                } catch (e) {
+                    // pass
                 }
                 $("#poster_file").val("");
             });

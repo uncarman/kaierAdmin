@@ -6,7 +6,7 @@
 
 
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary" ng-click="item_create();">上架新物品</button>
+            <button type="button" class="btn btn-primary" ng-click="pigeon_create(this);">上架新物品</button>
 
             <div class="btn-group pull-right" role="group" aria-label="...">
                 <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
@@ -74,9 +74,9 @@
                     <div class="modal-header">
                         <h4 class="modal-title form-inline">
                             <em>上架/编辑新物品</em>
-                            <input disabled class="form-control" ng-model="datas.selected_item.pk">
+                            <input type="hidden" disabled class="form-control" ng-model="datas.selected_pigeon.pk">
                             <div class="input-group pull-right">
-                                <input type="text" class="form-control" ng-model="datas.query" placeholder="输入商品编号或商品名搜索">
+                                <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="输入商品编号或商品名搜索">
                                 <div class="input-group-addon" ng-click="get_pigeon_list(this);">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </div>

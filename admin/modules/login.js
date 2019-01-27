@@ -3,7 +3,7 @@ define(function (require) {
 
     app.controller('loginCtrl', ['$scope', function ($scope) {
 
-        global.on_load_func();
+        global.on_load_func($scope);
 
         $scope.$watch('$viewContentLoaded', function () {
             global.on_loaded_func($scope);
@@ -68,7 +68,7 @@ define(function (require) {
                 $scope.ajax_code().then(function(data){
                     $scope.datas.ajaxing = false;
                     console.log(data);
-                    $scope.datas.code_identity = data.data.code_identity;
+                    //$scope.datas.code_identity = data.data.code_identity;
                     $scope.datas.code_interval = setInterval(function () {
                         $scope.datas.code_time_last -= 1;
                         $scope.$apply(function(){
@@ -116,7 +116,7 @@ define(function (require) {
 
             let cm = $scope.check_mobile();
             let cc = $scope.check_code();
-            let cci = $scope.datas.code_identity != "";
+            let cci = true; // $scope.datas.code_identity != "";
             if(!cm || !cc) {
                 // pass
             } else if(!cci) {
@@ -153,7 +153,7 @@ define(function (require) {
                 _param: {
                     mobile: $scope.datas.mobile,
                     code: $scope.datas.code,
-                    code_identity: $scope.datas.code_identity,
+                    //code_identity: $scope.datas.code_identity,
                 }
             };
             return global.return_promise($scope, param);

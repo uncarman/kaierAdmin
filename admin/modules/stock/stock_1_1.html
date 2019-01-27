@@ -87,7 +87,7 @@
                             <em><span ng-if="datas.item_view == 'edit'">编辑</span>鸽信息</em>
                             <div class="pull-right">
                                 <button class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="item_edit(this);">编辑信息</button>
+                                <button class="btn btn-primary" data-dismiss="modal" ng-show="is_view(this)" ng-click="item_edit(this, datas.selected_item.pk);">编辑信息</button>
                                 <button class="btn btn-primary" data-dismiss="modal" ng-show="!is_view(this)" ng-click="item_update(this);">确认入库</button>
                             </div>
                         </h4>
@@ -260,6 +260,7 @@
                 .bloodFloat2 { width: 50%; float: right; }
                 .bloodFloat3 {  width: 50%;  float: right; margin-top: 10px; }
                 .bloodFloat2 input, .bloodFloat3 input { width: 80%; }
+                .bloodFloat1 span, .bloodFloat2 span, .bloodFloat3 span { width: 215px; height: 25px; background: #f9f9f9; border-radius: 3px; display: inline-block; vertical-align: middle; }
             </style>
                         <div class="section">
                             <div class="row">
@@ -268,18 +269,16 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-12 row-content">
+                                <div class="col-sm-12 row-content" style="background: url(imgs/blood_arrow.png) 43.5% center no-repeat;">
                                     <div class="bloodFloat1">
                                         父系:
                                         <span ng-bind="datas.selected_item.father.blood" ng-show="is_view(this)"></span>
                                         <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.blood">
                                     </div>
-
                                     <div class="bloodFloat2">
                                         <span ng-bind="datas.selected_item.father.fblood" ng-show="is_view(this)"></span>
                                         <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.fblood">
                                     </div>
-
                                     <div class="bloodFloat3">
                                         <span ng-bind="datas.selected_item.father.mblood" ng-show="is_view(this)"></span>
                                         <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.father.mblood">
@@ -288,7 +287,7 @@
                             </div>
                             <p>&nbsp;</p>
                             <div class="row">
-                                <div class="col-sm-12 row-content">
+                                <div class="col-sm-12 row-content" style="background: url(imgs/blood_arrow.png) 43.5% center no-repeat;">
                                     <div class="bloodFloat1">
                                         母系:
                                         <span ng-bind="datas.selected_item.mother.blood" ng-show="is_view(this)"></span>

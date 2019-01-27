@@ -1,0 +1,215 @@
+<div class="content">
+
+    <top-menus></top-menus>
+
+    <div class="mainbody pigeonDept_3_1">
+
+
+        <div class="form-inline body-header form-withmargin">
+            <div class="form-group pull-left">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="datas.opt.query" placeholder="搜索手机号、用户名或会员号">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" ng-click="reset_datas(this);"></span>
+                    </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+        </div>
+
+        <div id="ajax_loading" ng-show="ajax_loading" class="iLoading_loading_pic"></div>
+        <table class="table table-hover" ng-show="!is_loading && datas.dataList.length > 0">
+            <thead>
+            <tr>
+                <th>用户头像</th>
+                <th>手机号</th>
+                <th>用户名</th>
+                <th>总消费</th>
+                <th>总订单数</th>
+                <th>消费类型</th>
+                <th>注册时间</th>
+                <th>违约记录</th>
+                <th>快速操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-if="!is_loading && datas.dataList.length <= 0">
+                <td colspan="9">没有数据</td>
+            </tr>
+            <tr ng-if="!is_loading && datas.dataList.length > 0" ng-repeat="d in datas.dataList">
+                <td><img class="imgsmall" ng-show="d.avatar != ''" ng-src="{{d.avatar}}"></td>
+                <td ng-bind="d.phone">--</td>
+                <td ng-bind="d.name">--</td>
+                <td ng-bind="d.spend">--</td>
+                <td ng-bind="d.order">--</td>
+                <td ng-bind="d.kind">--</td>
+                <td ng-bind="d.ctime">--</td>
+                <td ng-bind="d.vialotion">--</td>
+                <td>
+                    <div class="dropdown">
+                            <span class="icons glyphicon glyphicon-option-horizontal"
+                                  id="dropdownMenu_{{$index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu_{{$index}}">
+                            <li><a class="default" ng-click="item_view(this, d);">查看详情</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+
+        <page-nav ng-show="!is_loading && datas.dataList.length > 0"></page-nav>
+
+        <p id="data_no_item" ng-show="!is_loading && datas.dataList.length <= 0" class="nodatas">
+            <span class="icons info_icon"></span>
+            没有数据
+        </p>
+        <div class="clearfix"></div>
+
+        <!--商品详情-->
+        <div class="modal model-rt" id="goodDetail" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title form-inline">
+                            <em>用户信息</em>
+                            <div class="pull-right">
+                                <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>账号信息</b>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        用户名:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.name" ng-show="is_view(this)"></span>
+                                        <input class="form-control" disabled  ng-show="!is_view(this)" ng-model="datas.selected_item.name">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        注册手机:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.phone" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.phone">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        注册日期:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.ctime" ng-show="is_view(this)"></span>
+                                        <input class="form-control"  ng-show="!is_view(this)" ng-model="datas.selected_item.ctime">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        会员号:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.pk" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.pk">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        鸽舍名:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        开尔公棚
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        总消费:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.spend" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.spend">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2 row-title">
+                                        违约次数:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        <span ng-bind="datas.selected_item.vialotion" ng-show="is_view(this)"></span>
+                                        <input class="form-control" ng-show="!is_view(this)" ng-model="datas.selected_item.vialotion">
+                                    </div>
+                                    <div class="col-sm-2 row-title">
+                                        保证金:
+                                    </div>
+                                    <div class="col-sm-4 row-content">
+                                        0
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>地址信息</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <div class="row" ng-repeat="a in datas.selected_addr">
+                                        <div class="col-sm-2">
+                                            地址<span ng-bind="$index+1"></span>:
+                                        </div>
+                                        <div class="col-sm-2" ng-bind="a.name"></div>
+                                        <div class="col-sm-3" ng-bind="a.phone"></div>
+                                        <div class="col-sm-5" ng-bind="a.area + ' '+ a.street"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="row">
+                                <div class="col-sm-12 section-title">
+                                    <b>消费记录</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 row-content">
+                                    <table class="table table-hover" ng-show="!is_loading && datas.selected_order.length > 0">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>订单号</th>
+                                            <th>订单日期</th>
+                                            <th>订单金额</th>
+                                            <th>订单状态</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="o in datas.selected_order">
+                                            <td></td>
+                                            <td ng-bind="o.oid"></td>
+                                            <td ng-bind="o.ctime"></td>
+                                            <td ng-bind="o.price"></td>
+                                            <td ng-bind="datas.orderStatus[o.state][0]" ng-class="datas.orderStatus[o.state][1]"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <debug-info></debug-info>
+
+</div>

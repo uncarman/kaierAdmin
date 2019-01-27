@@ -6,7 +6,7 @@
 
 
         <div class="form-inline body-header form-withmargin">
-            <button type="button" class="btn btn-primary">创建新场拍卖</button>
+            <button type="button" class="btn btn-primary" ng-click="item_create(this);">创建新场拍卖</button>
 
             <div class="btn-group pull-right" role="group" aria-label="...">
                 <button type="button" class="btn" ng-class="datas.opt.state == 100 ? '--primary' : ''" ng-click="reset_datas(this, 100);">全部</button>
@@ -95,6 +95,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">场次配图:</label>
                                 <div class="col-sm-10">
+                                    <input type="file" id="poster_file" style="display: none;">
                                     <span class="upload-file" ng-show="datas.selected_item.cover != ''">
                                         <span class="icons icon-remove" ng-click="remove_cover();"></span>
                                         <img class="upload-file"
