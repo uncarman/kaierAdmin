@@ -130,7 +130,7 @@ define(function (require) {
                     let old_from = _session["from"];
 
                     global.set_storage_key('session', [
-                        {key: 'token', val: data.data.token},
+                        {key: 'token', val: data.code},
                         {key: 'from', val: ""}
                     ]);
 

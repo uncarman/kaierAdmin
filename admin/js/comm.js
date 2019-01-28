@@ -6,7 +6,7 @@ define(function (require, exports, module) {
     };
 
     var settings = {
-        default_page : "login",
+        default_page : "pigeonDept_1_1",
 
         default_datas :{
 
@@ -1246,12 +1246,12 @@ define(function (require, exports, module) {
             $scope.get_datas_prev = global.get_datas_prev;
             $scope.topMenuClick = global.topMenuClick;
 
-            // 前端校验用户登录
-            var _session = global.read_storage('session');
-            var token = _session.token;
-            if(!token) {
-                global["goto"]('login');
-            }
+            // // 前端校验用户登录
+            // var _session = global.read_storage('session');
+            // var token = _session.token;
+            // if(!token) {
+            //     global["goto"]('login');
+            // }
         },
 
         // 页面载入完成后调用函数
