@@ -57,16 +57,16 @@ define(function (require) {
                 return false;
             }
 
-            if($scope.datas.ajaxing) {
+            if($scope.ajax_loading) {
                 return false;
             }
 
             if($scope.datas.code_interval) {
                 // pass
             } else {
-                $scope.datas.ajaxing = true;
+                $scope.ajax_loading = true;
                 $scope.ajax_code().then(function(data){
-                    $scope.datas.ajaxing = false;
+                    $scope.ajax_loading = false;
                     console.log(data);
                     //$scope.datas.code_identity = data.data.code_identity;
                     $scope.datas.code_interval = setInterval(function () {
@@ -110,7 +110,7 @@ define(function (require) {
 
         // 点击注册
         $scope.do_login = function () {
-            if($scope.datas.ajaxing) {
+            if($scope.ajax_loading) {
                 return false;
             }
 
@@ -122,10 +122,10 @@ define(function (require) {
             } else if(!cci) {
                 alert("请先获取短信验证码");
             } else {
-                $scope.datas.ajaxing = true;
+                $scope.ajax_loading = true;
                 $scope.ajax_login().then(function(data){
                     console.log(data);
-                    $scope.datas.ajaxing = false;
+                    $scope.ajax_loading = false;
                     let _session = global.read_storage("session");
                     let old_from = _session["from"];
 
@@ -151,7 +151,7 @@ define(function (require) {
                 _method: 'post',
                 _url: settings.ajax_func.login,
                 _param: {
-                    mobile: $scope.datas.mobile,
+                    phone: $scope.datas.mobile,
                     code: $scope.datas.code,
                     //code_identity: $scope.datas.code_identity,
                 }

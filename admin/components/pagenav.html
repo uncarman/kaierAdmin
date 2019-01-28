@@ -7,7 +7,8 @@
         </li>
         <li ng-repeat="p in datas.pageList"
             ng-click="get_datas(this, p);"
-            ng-class="p == datas.cur_page ? 'active' : ''" ><a ng-bind="p">--</a></li>
+            ng-class="p == datas.cur_page ? 'active' : ''"
+            ng-show="p >= (datas.cur_page - 5) && p <= (datas.cur_page + 5)"><a ng-bind="p == (datas.cur_page - 5) || p == (datas.cur_page + 5) ? '...' : p">--</a></li>
         <li ng-click="get_datas_next(this);">
             <a aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>

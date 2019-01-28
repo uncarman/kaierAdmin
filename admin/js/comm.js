@@ -158,7 +158,7 @@ define(function (require, exports, module) {
 
 
         ajax_func: {
-            login: "login",
+            login: "/api/backend/v1/base/login",
             getLoginCode: "/api/backend/v1/base/verify",
             user: "user",
             getList: "getList",
@@ -623,8 +623,13 @@ define(function (require, exports, module) {
 
                 if ($scope) {
                     $scope.$apply(function(){
-                        // 尝试去掉按钮loading状态
-                        $scope.ajax_loading = false;
+                        try {
+                            // 尝试去掉按钮loading状态
+                            $scope.ajax_loading = false;
+                        } catch(e) {}
+                        try {
+                            $scope.datas.ajaxing = false;
+                        } catch(e) {}
                     });
                 }
 
@@ -1265,6 +1270,7 @@ define(function (require, exports, module) {
         },
 
         ajax_catch: function(data) {
+            $scope.ajax_loading = false;
             console.log("ajax_catch", data);
             alert("获取数据失败:"+data.error);
         },
@@ -1276,6 +1282,9 @@ define(function (require, exports, module) {
 
                 $scope.ajax_data()
                     .then($scope.get_datas_callback)
+                    .then(function () {
+                        $scope.ajax_loading = false;
+                    })
                     .catch($scope.ajax_catch);
             }
         },

@@ -52,7 +52,7 @@ define(function (require) {
         $scope.get_blood_list = function ($scope) {
             $scope.ajax_blood_list()
                 .then($scope.get_blood_list_callback)
-                .then($scope.ajax_catch);
+                .catch($scope.ajax_catch);
         }
         $scope.ajax_blood_list = function () {
             var param = {
